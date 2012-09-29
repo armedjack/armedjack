@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block content %}
+	<div class="form_container"><form method="post">		
+		<div class="label">Здесь должен быть заголовок</div>
+		<input type="text" id="subject" name="subject" value="{{title}}">
+		<div class="label">Сюда можно писать свои мысли</div>
+		<textarea name="content">{{text}}</textarea>
+		<div class="error">{{error}}</div>
+	</form></div>
+	<br>	
+	{% if not text_flow['error']%}
+		{% for msg in text_flow%}
+			<div class="message">
+				<div class="message-heading">
+					<div class="message-title">{{msg.title}}</div>
+					<div class="message-created">{{msg.created.strftime("%d %b %Y")}}</div>
+				</div>
+				<div class="message-body">{{msg.text}}</div>
+			</div>
+		{% endfor %}
+	{% else %}
+		<div class="message">
+			<div class="message-heading">
+				<div class="message-title">Что-то пошло не так.</div>				
+			</div>
+			<div class="message-body">{{text_flow['error']}}</div>
+		</div>
+	{%endif%}
+	
+
+<script>
+(function ($) {
+
+    $('html').addClass('js');
+
+    var postForm = {
+
+	config: {
+		qp_text1: 'Написать пост!',
+		qp_text2: 'X'
+	},
+
+	init: function(config){
+		$.extend (this.config, config);		
+
+		$('<div></div>', {
+			'text': postForm.config.qp_text1,
+			'class': 'js quickpost'
+		})
+			.prependTo($('body'))
+			.on('click', this.showhide)
+			.hover (				
+				function () {
+					var self = $(this);
+					if  (!self.hasClass('clicked')) {
+						self.css('width',100);
+					} 					
+				},
+				function () {
+					var self = $(this);
+					if  (!self.hasClass('clicked')) {self.css('width',95)}; 					
+				});		
+	},
+
+	showhide: function(){
+		var config = postForm.config,
+			container = $('div.form_container');			
+		$this = $(this);				
+
+		if ($this.hasClass('clicked')) {			 
+			$this.css('width',100).text(config.qp_text1);
+		}
+		else {			
+			$this.css('width',45).text(config.qp_text2);			
+		}				
+		$this.toggleClass('clicked'); 
+		container.slideToggle();
+		
+
+		if (container.find('input#button').length) return;
+
+		$('<input></input>',{
+			type: 'submit',
+			id: 'button'
+		})
+			.appendTo($('form'))
+			.on('click', function(event){
+				
+				if ($('input:first').val()=='' || $('form textarea').val()=='') {	
+					event.preventDefault();
+					$('div.error').text ('Необходим заголовок и текст. И то и другое!');
+				}
+
+			});
+			
+	}	
+}
+
+postForm.init();
+
+})(jQuery);	
+
+</script>
+
+{% endblock %}

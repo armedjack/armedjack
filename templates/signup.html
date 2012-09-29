@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+
+	<h2>Регистрация</h2>
+	
+	<div class="signup-form"> 
+		<form method="post">	
+
+			<div class="form-line">			
+				<div class="label">Username</div>
+				<input type="text" name="username" value="{{username}}" />	
+				{% if error_username%} <div class="error">{{error_username}}</div> {% endif %}
+				{% if error == 'ExistUserError' %} <div class="error">This user already exist</div> {% endif %}
+				
+				
+			</div>		
+			
+
+			<div class="form-line">
+				<div class="label">Password</div>
+				<input type="password" name="password" />				
+				{% if error_password%} <div class="error">{{error_password}}</div> {% endif %}
+				
+			</div>
+
+			<div class="form-line">
+				<div class="label">	Verify password</div>
+				<input type="password" name="verify" />				
+				{% if error_verify%} <div class="error">{{error_verify}}</div> {% endif %}
+				
+			</div>
+
+			<div class="form-line">
+				<div class="label">Email(optional)</div>
+				<input type="text" name="email" value="{{email}}" />				
+				{% if error_email%} <div class="error">{{error_email}}</div> {% endif %}		
+				
+			</div>	
+			<div class="form-line"></div>
+			<input type=submit>
+		
+		</form>
+	</div>
+
+{% endblock %}

@@ -1,0 +1,728 @@
+/*****************************/
+/*reset*/
+/*! normalize.css v2.0.1 | MIT License | git.io/normalize */
+
+/* ==========================================================================
+   HTML5 display definitions
+   ========================================================================== */
+
+/*
+ * Corrects `block` display not defined in IE 8/9.
+ */
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+nav,
+section,
+summary {
+    display: block;
+}
+
+/*
+ * Corrects `inline-block` display not defined in IE 8/9.
+ */
+
+audio,
+canvas,
+video {
+    display: inline-block;
+}
+
+/*
+ * Prevents modern browsers from displaying `audio` without controls.
+ * Remove excess height in iOS 5 devices.
+ */
+
+audio:not([controls]) {
+    display: none;
+    height: 0;
+}
+
+/*
+ * Addresses styling for `hidden` attribute not present in IE 8/9.
+ */
+
+[hidden] {
+    display: none;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+/*
+ * 1. Sets default font family to sans-serif.
+ * 2. Prevents iOS text size adjust after orientation change, without disabling
+ *    user zoom.
+ */
+
+html {
+    font-family: sans-serif; /* 1 */
+    -webkit-text-size-adjust: 100%; /* 2 */
+    -ms-text-size-adjust: 100%; /* 2 */
+}
+
+/*
+ * Removes default margin.
+ */
+
+body {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Links
+   ========================================================================== */
+
+/*
+ * Addresses `outline` inconsistency between Chrome and other browsers.
+ */
+
+a:focus {
+    outline: thin dotted;
+}
+
+/*
+ * Improves readability when focused and also mouse hovered in all browsers.
+ */
+
+a:active,
+a:hover {
+    outline: 0;
+}
+
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+
+/*
+ * Addresses `h1` font sizes within `section` and `article` in Firefox 4+,
+ * Safari 5, and Chrome.
+ */
+
+h1 {
+    font-size: 2em;
+}
+
+/*
+ * Addresses styling not present in IE 8/9, Safari 5, and Chrome.
+ */
+
+abbr[title] {
+    border-bottom: 1px dotted;
+}
+
+/*
+ * Addresses style set to `bolder` in Firefox 4+, Safari 5, and Chrome.
+ */
+
+b,
+strong {
+    font-weight: bold;
+}
+
+/*
+ * Addresses styling not present in Safari 5 and Chrome.
+ */
+
+dfn {
+    font-style: italic;
+}
+
+/*
+ * Addresses styling not present in IE 8/9.
+ */
+
+mark {
+    background: #ff0;
+    color: #000;
+}
+
+
+/*
+ * Corrects font family set oddly in Safari 5 and Chrome.
+ */
+
+code,
+kbd,
+pre,
+samp {
+    font-family: monospace, serif;
+    font-size: 1em;
+}
+
+/*
+ * Improves readability of pre-formatted text in all browsers.
+ */
+
+pre {
+    white-space: pre;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/*
+ * Sets consistent quote types.
+ */
+
+q {
+    quotes: "\201C" "\201D" "\2018" "\2019";
+}
+
+/*
+ * Addresses inconsistent and variable font size in all browsers.
+ */
+
+small {
+    font-size: 80%;
+}
+
+/*
+ * Prevents `sub` and `sup` affecting `line-height` in all browsers.
+ */
+
+sub,
+sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+
+sup {
+    top: -0.5em;
+}
+
+sub {
+    bottom: -0.25em;
+}
+
+/* ==========================================================================
+   Embedded content
+   ========================================================================== */
+
+/*
+ * Removes border when inside `a` element in IE 8/9.
+ */
+
+img {
+    border: 0;
+}
+
+/*
+ * Corrects overflow displayed oddly in IE 9.
+ */
+
+svg:not(:root) {
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   Figures
+   ========================================================================== */
+
+/*
+ * Addresses margin not present in IE 8/9 and Safari 5.
+ */
+
+figure {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Forms
+   ========================================================================== */
+
+/*
+ * Define consistent border, margin, and padding.
+ */
+
+fieldset {
+    border: 1px solid #c0c0c0;
+    margin: 0 2px;
+    padding: 0.35em 0.625em 0.75em;
+}
+
+/*
+ * 1. Corrects color not being inherited in IE 8/9.
+ * 2. Remove padding so people aren't caught out if they zero out fieldsets.
+ */
+
+legend {
+    border: 0; /* 1 */
+    padding: 0; /* 2 */
+}
+
+/*
+ * 1. Corrects font family not being inherited in all browsers.
+ * 2. Corrects font size not being inherited in all browsers.
+ * 3. Addresses margins set differently in Firefox 4+, Safari 5, and Chrome
+ */
+
+button,
+input,
+select,
+textarea {
+    font-family: inherit; /* 1 */
+    font-size: 100%; /* 2 */
+    margin: 0; /* 3 */
+}
+
+/*
+ * Addresses Firefox 4+ setting `line-height` on `input` using `!important` in
+ * the UA stylesheet.
+ */
+
+button,
+input {
+    line-height: normal;
+}
+
+/*
+ * 1. Avoid the WebKit bug in Android 4.0.* where (2) destroys native `audio`
+ *    and `video` controls.
+ * 2. Corrects inability to style clickable `input` types in iOS.
+ * 3. Improves usability and consistency of cursor style between image-type
+ *    `input` and others.
+ */
+
+button,
+html input[type="button"], /* 1 */
+input[type="reset"],
+input[type="submit"] {
+    -webkit-appearance: button; /* 2 */
+    cursor: pointer; /* 3 */
+}
+
+/*
+ * Re-set default cursor for disabled elements.
+ */
+
+button[disabled],
+input[disabled] {
+    cursor: default;
+}
+
+/*
+ * 1. Addresses box sizing set to `content-box` in IE 8/9.
+ * 2. Removes excess padding in IE 8/9.
+ */
+
+input[type="checkbox"],
+input[type="radio"] {
+    box-sizing: border-box; /* 1 */
+    padding: 0; /* 2 */
+}
+
+/*
+ * 1. Addresses `appearance` set to `searchfield` in Safari 5 and Chrome.
+ * 2. Addresses `box-sizing` set to `border-box` in Safari 5 and Chrome
+ *    (include `-moz` to future-proof).
+ */
+
+input[type="search"] {
+    -webkit-appearance: textfield; /* 1 */
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box; /* 2 */
+    box-sizing: content-box;
+}
+
+/*
+ * Removes inner padding and search cancel button in Safari 5 and Chrome
+ * on OS X.
+ */
+
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+
+/*
+ * Removes inner padding and border in Firefox 4+.
+ */
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+}
+
+/*
+ * 1. Removes default vertical scrollbar in IE 8/9.
+ * 2. Improves readability and alignment in all browsers.
+ */
+
+textarea {
+    overflow: auto; /* 1 */
+    vertical-align: top; /* 2 */
+}
+
+/* ==========================================================================
+   Tables
+   ========================================================================== */
+
+/*
+ * Remove most spacing between table cells.
+ */
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+/*конец ресета*/
+
+/************************************************************************************************************************/
+/*Общее*/
+/*****************************/
+
+body, html {
+	height:100%;
+	width:100%;			
+}
+		
+body {
+	font-family: Helvetica, Arial, sans-serif;
+	background-color: #fefefe;	
+	overflow: auto;
+	background: url(../img/bg.jpg);
+		
+}
+
+h1, h1 a:link, h1 a:visited, h1 a:hover  {
+	text-align: center;
+	color: white;
+	background-color: #A7C443;
+	font-family: Verdana, arial, sans-serif;
+	font-size: 1.4em;
+	font-weight: bold;
+	text-shadow: #1E1E1E 2px 2px 5px;
+	height: 60px;
+	margin-top: 0;
+	padding-top: 7px;
+	text-decoration: none;
+}
+
+h2{
+	font-size: 1.5em;
+	font-weight: bold;
+	margin-left: 10px;
+}
+
+hr {
+	margin: 0px auto 5px auto;	
+}
+
+.error {
+	color: #BE4249;
+	font-weight: bold;
+	font-size: 15px;
+	line-height: 32px;
+	margin-top: 10px;
+}
+
+div.wrap {		
+	background-color: #F9F9F9;	
+	margin:0 auto;	
+	width: 960px;
+	min-height: 100%;	
+	margin-bottom: -125px;
+	box-shadow: #1E1E1E 0px 0px 15px;
+
+
+}
+
+div.header, div.footer {	
+    width:100%;
+    min-width: 960px;
+}
+
+div.header {    
+	top:0;
+	left: 0;
+	position: absolute;	
+}
+
+div.content {
+	padding-top: 65px;
+
+}
+div.footer{
+	background: url(../img/footer_bg.png) repeat-x top;	
+	background-color: #161616;
+	text-align: center;
+	height: 133px;
+	color: white;
+	font-weight: bold; 
+	font-size: 18px;
+	padding-top: 22px;		
+	clear: both;
+	bottom: 0;	
+
+}
+div.page-buffer{
+	height: 151px;
+	
+}
+
+/***конец футера**************/
+/**конец общего***************/
+	
+/********************************/
+/*формы для логина и регистрации*/
+/********************************/
+
+div.login-form {
+	padding-left: 10px	
+
+}
+
+div.login-form form, div.signup-form form {	
+	display: block;
+	position: relative;	
+	text-align: left;
+	width: 900px;
+	margin: 0;	
+}
+div.login-form input[type=text], div.login-form input[type=password], div.signup-form input[type=text], div.signup-form input[type=password] {
+
+	width: 300px;
+	font-size: 18px;		
+	height: 30px;	
+	border: 1px solid #ccc;
+	padding: 0px;	
+	margin: 0px;
+
+}
+
+div.signup-form input[type=submit], div.login-form input[type=submit] {
+	font-size: 18px;	
+	padding: 3px;
+	font-weight:bold;
+	margin-top: 20px;	
+}
+
+div.signup-form {
+	padding-left: 10px;
+}
+
+
+div.signup-form input[type=text], input[type=password] 
+ {
+	padding: 0px;	
+	margin: 0px 7px 0px 0px;	
+	float:left;
+
+}
+
+div.login-form div.label , div.signup-form div.label {
+	width: 200px;	
+	height: 27px;
+	background-color: #58595b;	
+	float:left;
+
+	font-size: 18px;	
+	text-align: left;
+	color: white;	
+	font-weight:bold;		
+	
+	margin: 0px 0px 15px 0px;
+	padding: 5px 0px 0px 5px;	
+	
+}
+
+div.login-form a:link, div.login-form a:visited, div.signup-form a:link, div.signup-form a:visited{
+	padding-top: 16px;
+	display: block;
+	font-size: 18px;
+	color: black;
+}
+
+div.login-form a:hover, div.signup-form a:hover{
+	text-decoration: none;
+
+}
+div.form-line {clear:both;}
+
+
+
+/*****************************/
+/*форма для сообщения*/
+/*****************************/
+form {
+	margin: 0 auto;
+	color: black;
+	margin-top: 60px;	
+	width: 800px;
+	text-align: center;
+	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=100);
+	font: normal 20px Helvetica, sans-serif;
+}
+
+input, textarea, .label{
+	padding: 3px 5px;
+	width: 680px;
+	margin: 0 auto;		
+}
+
+
+input[type=text] {						
+	border: 1px;
+	display: block;
+
+}
+
+textarea {	
+	height: 200px;		
+	display: block;	
+}
+
+input[type=submit] {
+	font: bold 18px Helvetica, sans-serif;	
+	margin-top: 10px;
+	width: 120px;
+}
+
+.label {
+	font-weight: bold;
+	text-align: left;
+	color: white;					
+	background-color: #555;
+	margin: 0;	
+
+}
+/*конец формы*******************/
+
+/*****************************/
+/*контейнер формы*/
+/*****************************/
+.js .form_container {
+	 display: none;
+	
+	 width: 100%;
+	 height: 100%;
+	 top:0px;
+	 right: 0px;
+	 position:fixed;		 
+	 overflow: hidden;	 
+	 background-color: rgba(0,0,0,0.5);		 
+	 filter: progid:DXImageTransform.Microsoft.Alpha(opacity=50);
+	 zoom: 1;
+	 z-index: 500;		 
+}
+
+.quickpost{
+	display: none;
+}
+
+/*конец контейнера формы***********/
+
+/*****************************/
+/*кнопка для вызова формы*/
+/*****************************/
+.js .quickpost {
+
+	display: block;
+	text-align:center;
+	
+	font: bold 18px Helvetica,Sans-Serif;	
+	
+	color: white;
+	background-color: #0DA5B3;
+	cursor: pointer;
+
+	width:95px;
+	height: 45px;			
+	
+	z-index: 1000;
+	position: fixed;	
+	left: 0px;
+	margin-top: 100px;
+	padding: 5px;
+
+	-webkit-border-top-right-radius: 3px;
+	-webkit-border-bottom-right-radius: 3px;
+	-moz-border-radius-topright: 3px;
+	-moz-border-radius-bottomright: 3px;
+	border-top-right-radius: 3px;
+	border-bottom-right-radius: 3px;
+	-webkit-box-shadow: 1px 1px 5px rgba(0,0,0,0.40);
+	-moz-box-shadow: 1px 1px 5px rgba(0,0,0,0.40);
+	box-shadow: 3px 3px 7px rgba(0,0,0,0.4);
+}
+
+.clicked {	
+
+	background-color: #BE4249 !important;		
+	font:bold 28px Helvetica !important;		
+	padding: 10px 6px 0px 0px !important;
+	height: 45px !important;
+	width:45px;
+	position: absolute;		
+	
+}
+
+/*конец кнопки ***************/
+
+
+
+/*****************************/
+/*список сообщений*/
+/*****************************/
+.message + .message {
+
+	padding-bottom: 30px
+
+}
+
+
+.message {
+	position: relative;
+	margin: 0 auto;
+	width: 680px;		
+	background: white;
+	padding: 3px;
+	border: 1px solid #D9DDDE;		
+	clear: both;
+}
+
+.message-heading	{
+	position: relative;
+	border-bottom: 2px solid #888;
+
+}
+
+.message-title {
+	position: relative;
+	font-weight: normal;
+	font-size: 32px;	
+	padding: 30px 45px 5px 30px;
+	color: black;	
+	
+}
+
+.message-body {
+
+	margin:0;
+	font-size:18px;
+	color: black;	
+	padding: 30px 45px 15px 30px;
+	line-height: 26px;
+}
+
+.message-created {
+	position:absolute;
+	right:15px;
+	bottom: -21px;
+	color: #999;
+	font-size: 14px;
+	
+
+}
+
+/*конец конец списка***************/

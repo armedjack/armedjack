@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>My brilliant blog</title>
+	</head>
+	
+	<link rel="stylesheet" href="/css/blog.css" type="text/css" />
+	
+	
+	<body>
+	
+	<h1>My brilliant blog</h1>
+	
+	
+	<form method="post">
+			<label>
+				<div class="label">Name your thought</div>
+				<input type="text" name="subject" value="{{title}}">
+			</label>
+			
+			<label>
+				<div class="label">Share your splendid thought</div>
+				<textarea name="content">{{text}}</textarea>
+			</label>
+		
+			<div class="error">{{error}}</div>
+			<input type="submit">
+		</form>
+		
+		
+	</body>
+</html>
