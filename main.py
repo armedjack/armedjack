@@ -22,6 +22,9 @@ import jinja2
 import random
 import string
 import hmac
+import logging
+import gmemsess
+import datetime
 from pybcrypt import bcrypt
 from google.appengine.ext import db
 from google.appengine.api import memcache
@@ -42,16 +45,16 @@ secret = '_Long_123_Secret_456_String_789_' #следует сохранить �
 ##########################################################################
 
 def make_hash(*args): # создание хеша из полученных аргументов
-	line_for_hasing = ""
+	line_for_hashing = ""
 	for arg in args:
-		line_for_hasing += str(arg)
-	return bcrypt.hashpw(line_for_hasing, bcrypt.gensalt())
+		line_for_hashing += str(arg)
+	return bcrypt.hashpw(line_for_hashing, bcrypt.gensalt())
 
 def valid_hash(h, *args): # проверка хеша
-	line_for_hasing = ""
+	line_for_hashing = ""
 	for arg in args:
-		line_for_hasing += str(arg)
-	if bcrypt.hashpw(line_for_hasing, h) == h:
+		line_for_hashing += str(arg)
+	if bcrypt.hashpw(line_for_hashing, h) == h:
 			return True
 
 def make_secure_val(val): #простое хеширование параметра(на выходе параметр|хеш)
@@ -132,7 +135,7 @@ class MainHandler(webapp2.RequestHandler):
 	"""Базовый класс для обработчиков запросов браузера
 		writ() - отправляет аргументы на вывод браузеру
 		render_st() - перегрузка технической функции(добавление параметра "имя пользователя")
-		rende() - отправляет шаблон на вывод браузера(предварительно вызывает рендер шаблона render_str)
+		render() - отправляет шаблон на вывод браузера(предварительно вызывает рендер шаблона render_str)
 	"""
 	
 	def write(self, *a, **kw): #вывод текста на экран
@@ -145,26 +148,47 @@ class MainHandler(webapp2.RequestHandler):
 	def render(self, template, **kw): # вывод шаблона на экран
 		self.write(self.render_str(template, **kw))
 
-	def set_secure_cookie(self, name, val): # установка куки для сессии
-		cookie_val = make_secure_val(val)
+	def set_cookie(self, name, val, expires): # установка куки для сессии			
+		expires = (datetime.datetime.now() + datetime.timedelta(days=expires)).strftime('%a, %d %b %Y %H:%M:%S GMT')#Пока нет записи в датастор, а только в мемкэш больше трех дней не стоит делать.
 		self.response.headers.add_header(
 			'Set-Cookie',
-			'%s=%s; Path=/' %(name, cookie_val))
+			'%s=%s; expires=%s; Path=/' %(name, val, expires))
 
 	def read_secure_cookie(self, name): #чтение сессионной куки
-		cookie_val = self.request.cookies.get(name)
+		cookie_val = self.request.cookies.get(name)		
 		return cookie_val and check_secure_val(cookie_val)
 
+	def check_session(self):		
+		if self.session.is_new():			
+			return None
+		cookie_val = self.request.cookies.get('ssid') #хеш из uid и ip
+		if valid_hash(cookie_val, self.session['uid'], self.request.remote_addr):			
+			return self.session['uid']
+		else: 
+			return None
+	
 	def login(self, user): #логин пользователя (установка сессионной куки)
-		self.set_secure_cookie('user_id', str(user.key().id()))
+
+		ssid = make_hash(user.key().id(), self.request.remote_addr)
+		self.set_cookie('ssid', ssid, expires=3)		
+		self.session['uid'] = user.key().id()
+
+		self.session['ssid'] = ssid
+		self.session.save()
 
 	def logout(self): #логаут
-		self.response.headers.add_header('Set-Cookie', 'user_id=; Path=/')
+		# self.response.headers.add_header('Set-Cookie', 'uid=; Path=/')
+		self.session.invalidate()
 
 	def initialize(self, *a, **kw):
+
 		webapp2.RequestHandler.initialize(self, *a, **kw)
-		uid = self.read_secure_cookie('user_id')
-		self.user = uid and User.by_id(int(uid))		
+		#uid = self.read_secure_cookie('user_id')		
+		self.session = gmemsess.Session(self)
+		uid = self.check_session()
+		logging.error(uid)
+		self.user = uid and User.by_id(int(uid))
+		
 	
 class Front(MainHandler):
 	"""Модель для главной страницы"""
@@ -270,7 +294,7 @@ class Logout(MainHandler):
 		self.redirect(app_path['main'])
 
 	
-
+logging.getLogger().setLevel(logging.DEBUG)
 app = webapp2.WSGIApplication([(app_path['main'], Front)
 								,(app_path['signup'],Signup)
 								,(app_path['login'], Login)

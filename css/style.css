@@ -383,14 +383,15 @@ table {
 
 body, html {
 	height:100%;
-	width:100%;			
+	width:100%;	
+
 }
 		
 body {
 	font-family: Helvetica, Arial, sans-serif;
 	background-color: #fefefe;	
 	overflow: auto;
-	background: url(../img/bg.jpg);
+	background: url(../img/bg.jpg);	
 		
 }
 
@@ -398,18 +399,18 @@ h1, h1 a:link, h1 a:visited, h1 a:hover  {
 	text-align: center;
 	color: white;
 	background-color: #A7C443;
-	font-family: Verdana, arial, sans-serif;
-	font-size: 1.4em;
+	font-family: 'Russo One', Courier;	
+	font-size: 1.75em;
 	font-weight: bold;
 	text-shadow: #1E1E1E 2px 2px 5px;
 	height: 60px;
 	margin-top: 0;
-	padding-top: 7px;
+	padding-top: 0px;
 	text-decoration: none;
 }
 
 h2{
-	font-size: 1.5em;
+	font-size: 1.1em;
 	font-weight: bold;
 	margin-left: 10px;
 }
@@ -427,7 +428,7 @@ hr {
 }
 
 div.wrap {		
-	background-color: #F9F9F9;	
+	background-color: #FFFFDD;	
 	margin:0 auto;	
 	width: 960px;
 	min-height: 100%;	
@@ -531,7 +532,7 @@ div.login-form div.label , div.signup-form div.label {
 	color: white;	
 	font-weight:bold;		
 	
-	margin: 0px 0px 15px 0px;
+	margin: 0px auto 15px;
 	padding: 5px 0px 0px 5px;	
 	
 }
@@ -583,7 +584,7 @@ textarea {
 }
 
 input[type=submit] {
-	font: bold 18px Helvetica, sans-serif;	
+	font: inherit;	
 	margin-top: 10px;
 	width: 120px;
 }
@@ -593,7 +594,7 @@ input[type=submit] {
 	text-align: left;
 	color: white;					
 	background-color: #555;
-	margin: 0;	
+	margin: 0 auto;	
 
 }
 /*конец формы*******************/
@@ -688,7 +689,7 @@ input[type=submit] {
 	background: white;
 	padding: 3px;
 	border: 1px solid #D9DDDE;		
-	clear: both;
+	clear: both;	
 }
 
 .message-heading	{
@@ -700,7 +701,7 @@ input[type=submit] {
 .message-title {
 	position: relative;
 	font-weight: normal;
-	font-size: 32px;	
+	font-size: 2em;	
 	padding: 30px 45px 5px 30px;
 	color: black;	
 	
@@ -709,10 +710,13 @@ input[type=submit] {
 .message-body {
 
 	margin:0;
-	font-size:18px;
-	color: black;	
+	font-size:1em;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: normal;	
+	color: #444;
 	padding: 30px 45px 15px 30px;
-	line-height: 26px;
+	line-height: 1.5em;
 }
 
 .message-created {
