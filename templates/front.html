@@ -1,12 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
-	<div class="form_container"><form method="post">		
+{% if user %}	
+	<div class="form_container"><form method="post" >		
 		<div class="label">Здесь должен быть заголовок</div>
 		<input type="text" id="subject" name="subject" value="{{title}}">
 		<div class="label">Сюда можно писать свои мысли</div>
 		<textarea name="content">{{text}}</textarea>
 		<div class="error">{{error}}</div>
 	</form></div>
+{% endif %}	
 	<br>	
 	{% if not text_flow['error']%}
 		{% for msg in text_flow%}
@@ -14,8 +16,13 @@
 				<div class="message-heading">
 					<div class="message-title">{{msg.title}}</div>
 					<div class="message-created">{{msg.created.strftime("%d %b %Y")}}</div>
+				<div class="message-author"><img src="../img/user.png">{% if msg.author%}{{msg.author}}{% else %}Балбес{% endif %}</div>
 				</div>
 				<div class="message-body">{{msg.text}}</div>
+				<div class="comment-link">
+					<a href="{{blog}}#comments"><div class="comments-ammount">{% if msg.comments %}{{msg.comments}}{% else %}0{% endif %}</div></a>
+					<a href="{{blog}}/{{msg.key().id()}}">Читать дальше</a>
+				</div>
 			</div>
 		{% endfor %}
 	{% else %}
@@ -27,7 +34,7 @@
 		</div>
 	{%endif%}
 	
-
+{% if user %}	
 <script>
 (function ($) {
 
@@ -101,5 +108,5 @@ postForm.init();
 })(jQuery);	
 
 </script>
-
+{% endif %}
 {% endblock %}

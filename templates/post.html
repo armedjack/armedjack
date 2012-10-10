@@ -1,24 +1,149 @@
-<!DOCTYPE html>
+{% extends "base.html" %}
 
-<html>
-	<head>
-		<title>My brilliant blog</title>
-	</head>
-	
-	<link rel="stylesheet" href="/css/blog.css" type="text/css" />
-	
-	
-	<body>
-	
-		<a href="/" style="text-decoration:none"><h1>&lt&lt Back to My brilliant blog</h1></a>
-		
-				
+{% block content %}	
+{% if user %}	
+	<div class="form_container"><form action="/" method="post">		
+		<div class="label">Здесь должен быть заголовок</div>
+		<input type="text" id="subject" name="subject" value="{{title}}">
+		<div class="label">Сюда можно писать свои мысли</div>
+		<textarea name="content">{{text}}</textarea>
+		<div class="error">{{error}}</div>
+	</form></div>
+{% endif %}	
+		<h2><a href="/">Простенький блог</a> \ {{msg.title}}</h2>
 		<div class="message">
-				<div class="message-title">{{title}}</div>
-				<hr>
-				<pre class="message-body">{{text}}</pre>
+			<div class="message-heading">
+				<div class="message-title">{{msg.title}}</div>
+				<div class="message-created">{{msg.created.strftime("%d %b %Y")}}</div>
+				<div class="message-author"><img src="../img/user.png">{% if msg.author%}{{msg.author}}{% else %}Балбес{% endif %}</div>
+			</div>
+			<div class="message-body">{{msg.text}}</div>		
 		</div>
+
+		{% for com in com_flow%}
+			<div class="com">
+				<div class="com-heading">					
+					<div class="com-created">{{com.created.strftime("%d %b %Y")}}</div>
+					<div class="com-author"><img src="../img/user.png">{% if com.author%}{{com.author}}{% else %}Балбес{% endif %}</div>
+				</div>
+				<div class="com-body">{{com.text}}<a class="com-answer" href="">Ответить</a></div>				
+
+			</div>
+		{% endfor %}
+
+
+{% if user %}	
+	<div><form action="{{blog}}/{{msg.key().id()}}" method="post">				
+		<div class="label">Написать комментарий:</div>
+		<textarea name="content"></textarea>	
+		<input type="submit">
+	</form></div>
+
+<script type="tmpl" id="com-answ">
+	<form class="com-answer_form" action="">
+	    <textarea name="" id="" cols="30" rows="5"></textarea>
+	    <input type="submit">
+	</form>	
+</script>
+<script>
+(function ($) {
+
+    $('html').addClass('js');
+
+    var form = $('#com-answ').html()    
+    $('a.com-answer').on('click', function(event){
+    	
+    	if ($(this).children('form').length) {
+    		$(this).children('form').remove()
+    		console.log('exist!')
+    	}
+    	else {
+    		$(form).appendTo(this)
+    	}
+    	
+    	event.preventDefault();
+    	console.log ();
+    })
+    /*var commentForm = {
+
+    init: function(){
+
+    	$('<form></form>', {
+    		'class': 'js commentform'
+    	})
+    		.appendTo()
+
+
+    }
+    }*/
+
+    var postForm = {
+
+	config: {
+		qp_text1: 'Написать пост!',
+		qp_text2: 'X'
+	},
+
+	init: function(config){
+		$.extend (this.config, config);		
+
+		$('<div></div>', {
+			'text': postForm.config.qp_text1,
+			'class': 'js quickpost'
+		})
+			.prependTo($('body'))
+			.on('click', this.showhide)
+			.hover (				
+				function () {
+					var self = $(this);
+					if  (!self.hasClass('clicked')) {
+						self.css('width',100);
+					} 					
+				},
+				function () {
+					var self = $(this);
+					if  (!self.hasClass('clicked')) {self.css('width',95)}; 					
+				});		
+	},
+
+	showhide: function(){
+		var config = postForm.config,
+			container = $('div.form_container');			
+		$this = $(this);				
+
+		if ($this.hasClass('clicked')) {			 
+			$this.css('width',100).text(config.qp_text1);
+		}
+		else {			
+			$this.css('width',45).text(config.qp_text2);			
+		}				
+		$this.toggleClass('clicked'); 
+		container.slideToggle();
 		
-	
-	</body>
-</html>
+
+		if (container.find('input#button').length) return;
+
+		$('<input></input>',{
+			type: 'submit',
+			id: 'button'
+		})
+			.appendTo($('form'))
+			.on('click', function(event){
+				
+				if ($('input:first').val()=='' || $('form textarea').val()=='') {	
+					event.preventDefault();
+					$('div.error').text ('Необходим заголовок и текст. И то и другое!');
+				}
+
+			});
+			
+	}	
+}
+
+postForm.init();
+
+})(jQuery);	
+
+</script>
+{% endif %}
+{% endblock %}

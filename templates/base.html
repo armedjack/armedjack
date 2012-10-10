@@ -13,7 +13,19 @@
 
 
 <div class="wrap">				
-	<div class="header"><h1><a href="/">Простенький блог</a></h1></div>
+	<div class="header">
+		<div class="header_staff">
+			<h1><a href="/">Простенький блог</a></h1>
+			<ul class="login_nav">
+				{% if user%}				
+				<li>Привет, {{user.name}}! (<a class="logout" href="{{logout}}">выйти</a>)</li>
+				{% else %}
+				<li><a href="{{login}}">ВОЙТИ</a></li>
+				<li><a href="{{signup}}">ЗАРЕГИСТРИРОВАТЬСЯ</a></li>				
+				{% endif %}
+			</ul>
+		</div>
+	</div>
 	<div class="content">
 	{% block content %}{% endblock %}			
 	</div>

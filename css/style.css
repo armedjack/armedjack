@@ -389,24 +389,30 @@ body, html {
 		
 body {
 	font-family: Helvetica, Arial, sans-serif;
-	background-color: #fefefe;	
+	background: url(../img/bg.jpg);
 	overflow: auto;
-	background: url(../img/bg.jpg);	
+
 		
 }
 
 h1, h1 a:link, h1 a:visited, h1 a:hover  {
-	text-align: center;
-	color: white;
-	background-color: #A7C443;
+	text-align: left;	
 	font-family: 'Russo One', Courier;	
 	font-size: 1.75em;
-	font-weight: bold;
-	text-shadow: #1E1E1E 2px 2px 5px;
-	height: 60px;
+	font-weight: bold;		
 	margin-top: 0;
-	padding-top: 0px;
+	padding-top: 9px;
 	text-decoration: none;
+
+	background-color: #8acc6c;  	
+  	color: transparent;
+  	text-shadow: -2px -2px 0px rgba(64,115,36,1);
+  	-webkit-background-clip: text;
+    -moz-background-clip: text;
+    background-clip: text;
+    float: left;
+
+	
 }
 
 h2{
@@ -428,30 +434,73 @@ hr {
 }
 
 div.wrap {		
-	background-color: #FFFFDD;	
+	background-color: white;	
 	margin:0 auto;	
 	width: 960px;
 	min-height: 100%;	
 	margin-bottom: -125px;
-	box-shadow: #1E1E1E 0px 0px 15px;
+	box-shadow: #1E1E1E 0px 5px 15px;
+	border-top-right-radius: 3px;
+	border-top-left-radius: 3px;
+
 
 
 }
 
 div.header, div.footer {	
     width:100%;
-    min-width: 960px;
+    min-width: 960px;    
 }
 
 div.header {    
-	top:0;
+	top: 0;
 	left: 0;
+	height: 118px;
 	position: absolute;	
+	z-index: -1;
+	background: url(../img/header_bg.png) repeat-x 0 100%;	
+	background-size: contain; 	
 }
 
-div.content {
-	padding-top: 65px;
+div.header_staff {
+	width: 960px;
+	margin: 0 auto;
 
+}
+
+.login_nav {
+	float: right;
+	list-style-type: none;
+	padding-top: 58px;
+}
+
+.login_nav li {
+	float: left;
+	margin-left: 30px;		
+}
+
+.login_nav li, .login_nav li a:link, .login_nav li a:visited {
+	font: 1em Helvetica, Arial, sans-serif;
+	color: white;	
+	text-decoration: none;
+}
+
+.login_nav li a.logout:link, .login_nav li a.logout:visited {
+	text-decoration: underline;
+	font-size: 0.9em;
+
+}
+
+.login_nav li a.logout:hover {
+	text-decoration: none;
+
+}
+
+
+div.content {
+	margin-top: 97px;
+
+	padding-top: 1px;
 }
 div.footer{
 	background: url(../img/footer_bg.png) repeat-x top;	
@@ -643,7 +692,9 @@ input[type=submit] {
 	z-index: 1000;
 	position: fixed;	
 	left: 0px;
-	margin-top: 100px;
+	
+
+	top: 97px;
 	padding: 5px;
 
 	-webkit-border-top-right-radius: 3px;
@@ -675,27 +726,19 @@ input[type=submit] {
 /*****************************/
 /*список сообщений*/
 /*****************************/
-.message + .message {
-
-	padding-bottom: 30px
-
-}
-
 
 .message {
 	position: relative;
 	margin: 0 auto;
-	width: 680px;		
-	background: white;
+	min-width: 680px;		
+	width: 95%;
 	padding: 3px;
-	border: 1px solid #D9DDDE;		
+	border-bottom: 1px solid #D9DDDE;		
 	clear: both;	
 }
 
 .message-heading	{
 	position: relative;
-	border-bottom: 2px solid #888;
-
 }
 
 .message-title {
@@ -703,7 +746,7 @@ input[type=submit] {
 	font-weight: normal;
 	font-size: 2em;	
 	padding: 30px 45px 5px 30px;
-	color: black;	
+	color: #2d2d2d;	
 	
 }
 
@@ -714,7 +757,7 @@ input[type=submit] {
 	font-style: normal;
 	font-variant: normal;
 	font-weight: normal;	
-	color: #444;
+	color: #555;
 	padding: 30px 45px 15px 30px;
 	line-height: 1.5em;
 }
@@ -722,11 +765,60 @@ input[type=submit] {
 .message-created {
 	position:absolute;
 	right:15px;
-	bottom: -21px;
+	bottom: 10px;
 	color: #999;
-	font-size: 14px;
-	
+	font-size: 0.95em;
+	font-weight: bold;
+}
 
+.message-author {
+	position:absolute;
+	left: 30px;
+	bottom: -17px;
+	color: #666;
+	font-size: 0.9em;
+	font-weight: bold;
+}
+
+.comment-link {
+	text-align: right;
+	font-size: 0.9em;	
+	padding-bottom: 5px;		
+
+
+}
+.comments-ammount {	
+	color:#f3f3f3;			
+	text-shadow: 1px 1px 0px #63a73e;
+	font-weight: bold;
+	font-size: 1em;
+	text-align: center;
+	padding: 4px 5px 10px;
+	position: relative;	
+	display: inline-block;		
+	background: url(../img/baloon2.png);	
+	-webkit-background-size: 100% 100%;
+    -moz-background-size: 100% 100%;
+    -o-background-size: 100% 100%;
+    background-size: 100% 100%;
+	min-width: 20px;	
+	max-height: 32px;
+	background-repeat: no-repeat no-repeat;	
+
+}
+.comment-link a:link, a:visited {
+	text-decoration: none;	
+	color: #444;
+	padding-bottom: 1px;
+	border-bottom: 1px solid #444;
+}
+
+.comment-link a:hover{
+	border-bottom: 0;
+}
+
+.comment-link a:link:first-child, a:visited:first-child {	
+	border-bottom: 0;
 }
 
 /*конец конец списка***************/

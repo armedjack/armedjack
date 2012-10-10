@@ -32,11 +32,14 @@ from google.appengine.api import memcache
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
 							   autoescape = True)
-
+SESSION_EXPIRES = 3 #сколько дней храним сессию
 
 app_path = {'main'	: '/',
 			'login'	: '/login',
-			'signup': '/signup'
+			'signup': '/signup',
+			'logout': '/logout',
+			'blog'	: '/blog',
+			'comment': '/comment'
 			}
 secret = '_Long_123_Secret_456_String_789_' #следует сохранить отдельно
 
@@ -125,9 +128,14 @@ class User(db.Model):
 class Post (db.Model):
 	title = db.StringProperty(required = True)
 	text = db.TextProperty(required = True)
+	comments = db.IntegerProperty(default = 0)
+	author = db.StringProperty()
 	created = db.DateTimeProperty(auto_now_add = True)
 
-
+class Comment (db.Model):
+	text = db.TextProperty(required = True)
+	author = db.StringProperty()
+	created = db.DateTimeProperty(auto_now_add = True)
 ##########################################################################
 #Модели сраниц
 ##########################################################################
@@ -141,8 +149,9 @@ class MainHandler(webapp2.RequestHandler):
 	def write(self, *a, **kw): #вывод текста на экран
 		self.response.out.write(*a, **kw)
 
-	def render_str(self, template, **params): # добавление имени пользователя в рендер шаблона
+	def render_str(self, template, **params): # добавление различных параметров в рендер шаблона 
 		params['user'] = self.user
+		params.update(app_path)		
 		return render_str(template, **params) # вызов технической функции с новым параметром
 
 	def render(self, template, **kw): # вывод шаблона на экран
@@ -170,7 +179,7 @@ class MainHandler(webapp2.RequestHandler):
 	def login(self, user): #логин пользователя (установка сессионной куки)
 
 		ssid = make_hash(user.key().id(), self.request.remote_addr)
-		self.set_cookie('ssid', ssid, expires=3)		
+		self.set_cookie('ssid', ssid, expires=SESSION_EXPIRES)		
 		self.session['uid'] = user.key().id()
 
 		self.session['ssid'] = ssid
@@ -185,41 +194,56 @@ class MainHandler(webapp2.RequestHandler):
 		webapp2.RequestHandler.initialize(self, *a, **kw)
 		#uid = self.read_secure_cookie('user_id')		
 		self.session = gmemsess.Session(self)
-		uid = self.check_session()
-		logging.error(uid)
+		uid = self.check_session()		
 		self.user = uid and User.by_id(int(uid))
+		if self.user is not None: #если пользователь существует сохраняем в объект его uid из датастора
+			self.user.uid = int(uid)
+			logging.error(self.user.__dict__)
 		
 	
 class Front(MainHandler):
 	"""Модель для главной страницы"""
-	def get(self):
-		if self.user: 
-			text_flow = db.GqlQuery("select * from Post order by created desc limit 10")
-			if text_flow: self.render("front.html", text_flow = text_flow)
-		else:
-			self.redirect(app_path['login'])
+	def get(self):		
+		# text_flow = db.GqlQuery("select * from Post order by created desc limit 10")
+		text_flow = Post.all().order('-created').fetch(10)		
+		if text_flow: self.render("front.html", text_flow = text_flow)	
 
 	def post(self):
 		title = self.request.get("subject")
 		text = self.request.get("content")
-		
-		if title and text:
-			a = Post(title = title, text = text)
-			a.put()
-			msg_id = str (a.key().id())
-			# self.redirect("/blog/%s" %msg_id)
-			self.redirect(app_path['main'])
-			
+		if self.user:
+			if title and text:
+				a = Post(title = title, text = text, author = self.user.name)
+				a.put()
+				msg_id = str (a.key().id())
+				# self.redirect("/blog/%s" %msg_id)
+				self.redirect(app_path['main'])
+				
+			else:
+				error = "We need some text and it's title. Both."
+				self.render_front(title = title, text = text, error = error)
 		else:
-			error = "We need some text and it's title. Both."
-			self.render_front(title = title, text = text, error = error)
+			self.redirect(app_path['login'])
 
 class PostHandler (MainHandler):
 	
-	def get (self, post_id):
-		p=Post.get_by_id(int(post_id))
+	def get (self, post_id): #выводим пост с комментариями
+		p=Post.get_by_id(int(post_id))		
+		com_flow = Comment.all().ancestor(p)
 		if p:
-			self.render("post.html", text = p.text, title = p.title)
+			self.render("post.html", msg = p, com_flow = com_flow)
+
+	def post (self, post_id): #добавляем комментарий
+		text = self.request.get("content")		
+		if self.user and text:
+			p = Post.get_by_id(int(post_id))
+			c = Comment (parent = p, text = text, author = self.user.name)
+			c.put()
+			#сделать проверку успешной записи комментария и если ок, то увеличить счетчик комментариев.
+			p.comments +=1
+			p.put()
+			
+		self.redirect(app_path['blog']+'/'+post_id)
 
 class Signup(MainHandler):
 	"""Модель для страницы регистрации"""
@@ -298,7 +322,7 @@ logging.getLogger().setLevel(logging.DEBUG)
 app = webapp2.WSGIApplication([(app_path['main'], Front)
 								,(app_path['signup'],Signup)
 								,(app_path['login'], Login)
-								#,('/blog/([0-9]+)', PostHandler)
+								,(app_path['blog']+'/([0-9]+)', PostHandler)								
 								,('/logout', Logout)
 								],
 							  debug=True)
