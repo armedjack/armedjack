@@ -198,7 +198,7 @@ class MainHandler(webapp2.RequestHandler):
 		self.user = uid and User.by_id(int(uid))
 		if self.user is not None: #если пользователь существует сохраняем в объект его uid из датастора
 			self.user.uid = int(uid)
-			logging.error(self.user.__dict__)
+		
 		
 	
 class Front(MainHandler):
@@ -227,22 +227,41 @@ class Front(MainHandler):
 
 class PostHandler (MainHandler):
 	
-	def get (self, post_id): #выводим пост с комментариями
+	def get (self, post_id, com_id): #выводим пост с комментариями
 		p=Post.get_by_id(int(post_id))		
 		com_flow = Comment.all().ancestor(p)
-		if p:
-			self.render("post.html", msg = p, com_flow = com_flow)
+		new_com_flow = []
+		i = 0
+		for com in com_flow:#определяем отступы для комментариев	
 
-	def post (self, post_id): #добавляем комментарий
+			new_com_flow.append(com) #составляем новый массив из элементов Comment
+			ident_value = len(com.key().to_path())/2 - 2 #считаем отступ на основе длины пути (каждая ступень иерархии - два слова, первые два слова - уровень поста - нулевой)
+			
+			if ident_value>3: ident_value = 3 #максимальный отступ - 3
+		 	
+		 	setattr(new_com_flow[i], 'ident', ident_value )#добавляем каждому элементу массива параметр ident
+		 	
+		 	i += 1		
+		logging.error(new_com_flow[3].parent().key())
+		if p:
+			self.render("post.html", msg = p, com_flow = new_com_flow)
+
+	def post (self, post_id, com_key): #добавляем комментарий
 		text = self.request.get("content")		
 		if self.user and text:
 			p = Post.get_by_id(int(post_id))
-			c = Comment (parent = p, text = text, author = self.user.name)
+			if com_key is not None: #если был получен ИД комментария, значит добавляем ответ на комментарий (дочерний комментарий)
+				parent = db.Key(encoded = com_key) 				
+			else:# если ид коммента не получен, значит добавляем обычный комментарий 
+				parent = p 
+			c = Comment (parent = parent, text = text, author = self.user.name)
 			c.put()
-			#сделать проверку успешной записи комментария и если ок, то увеличить счетчик комментариев.
+			logging.error(c.parent())
+			#!!!сделать проверку успешной записи комментария и если ок, то увеличить счетчик комментариев.
 			p.comments +=1
 			p.put()
-			
+
+				
 		self.redirect(app_path['blog']+'/'+post_id)
 
 class Signup(MainHandler):
@@ -322,7 +341,7 @@ logging.getLogger().setLevel(logging.DEBUG)
 app = webapp2.WSGIApplication([(app_path['main'], Front)
 								,(app_path['signup'],Signup)
 								,(app_path['login'], Login)
-								,(app_path['blog']+'/([0-9]+)', PostHandler)								
+								,(app_path['blog']+'/([0-9]+)/*(.+)*', PostHandler)								
 								,('/logout', Logout)
 								],
 							  debug=True)

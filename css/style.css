@@ -680,16 +680,16 @@ input[type=submit] {
 	display: block;
 	text-align:center;
 	
-	font: bold 18px Helvetica,Sans-Serif;	
+	font: bold 1.15em Helvetica,Sans-Serif;	
 	
 	color: white;
-	background-color: #0DA5B3;
+	background: #0DA5B3;	
 	cursor: pointer;
 
 	width:95px;
 	height: 45px;			
 	
-	z-index: 1000;
+	z-index: 3000;
 	position: fixed;	
 	left: 0px;
 	
@@ -702,11 +702,15 @@ input[type=submit] {
 	-moz-border-radius-topright: 3px;
 	-moz-border-radius-bottomright: 3px;
 	border-top-right-radius: 3px;
-	border-bottom-right-radius: 3px;
+	border-bottom-right-radius: 3px;     
+
 	-webkit-box-shadow: 1px 1px 5px rgba(0,0,0,0.40);
 	-moz-box-shadow: 1px 1px 5px rgba(0,0,0,0.40);
 	box-shadow: 3px 3px 7px rgba(0,0,0,0.4);
+
+
 }
+
 
 .clicked {	
 
@@ -820,5 +824,22 @@ input[type=submit] {
 .comment-link a:link:first-child, a:visited:first-child {	
 	border-bottom: 0;
 }
+
+.ident0 {
+	margin-left: 5px;
+}
+
+.ident1 {
+	margin-left: 100px;
+}
+
+.ident2 {
+	margin-left: 200px;
+}
+
+.ident3 {
+	margin-left: 300px;
+}
+
 
 /*конец конец списка***************/

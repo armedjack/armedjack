@@ -21,12 +21,16 @@
 		</div>
 
 		{% for com in com_flow%}
-			<div class="com">
+			<div class="com ident{{com.ident}}">
 				<div class="com-heading">					
 					<div class="com-created">{{com.created.strftime("%d %b %Y")}}</div>
 					<div class="com-author"><img src="../img/user.png">{% if com.author%}{{com.author}}{% else %}Балбес{% endif %}</div>
 				</div>
-				<div class="com-body">{{com.text}}<a class="com-answer" href="">Ответить</a></div>				
+				<div class="com-body">{{com.text}}<br><a class="com-answer " href="" data-key="{% if com.ident != 3%}
+						{{com.key()}}
+					{% else %}
+						{{com.parent().key()}}
+					{% endif %}">Ответить</a></div>				
 
 			</div>
 		{% endfor %}
@@ -39,43 +43,41 @@
 		<input type="submit">
 	</form></div>
 
-<script type="tmpl" id="com-answ">
-	<form class="com-answer_form" action="">
-	    <textarea name="" id="" cols="30" rows="5"></textarea>
+
+<script type="tmpl" id="com-answ">/*шаблон для формы комментирования*/
+	<form class="com-answer_form" action="{{blog}}/{{msg.key().id()}}/" method="post">
+	    <textarea name="content" cols="20" rows="3"></textarea>
 	    <input type="submit">
 	</form>	
 </script>
 <script>
+
 (function ($) {
 
     $('html').addClass('js');
-
-    var form = $('#com-answ').html()    
+/*добавления дочернего комментария (ответа на комментарий)*/
+    var f = $('#com-answ').html();   
     $('a.com-answer').on('click', function(event){
     	
-    	if ($(this).children('form').length) {
-    		$(this).children('form').remove()
-    		console.log('exist!')
+    	if ($(this).siblings('form').length) {
+    		$(this).siblings('form').remove();
+    		/*console.log('exist!')*/
     	}
     	else {
-    		$(form).appendTo(this)
+    		$(f).insertAfter(this);
+    		var key = $(this).attr('data-key'), /*считываем key комментария на который отвечаем*/
+    			new_action = $(this).siblings('form').attr('action')+key; /*добавляем key родительского комментария в action формы для передачи на сервер*/
+    		$(this).siblings('form').attr('action', new_action)
+    		console.log($(this).siblings('form'))
+    		
     	}
     	
     	event.preventDefault();
     	console.log ();
     })
-    /*var commentForm = {
+/*конец добавления дочернего комментария*/
 
-    init: function(){
-
-    	$('<form></form>', {
-    		'class': 'js commentform'
-    	})
-    		.appendTo()
-
-
-    }
-    }*/
+/*создание сообщения(эффекты формы, кнопка вызова формы)*/
 
     var postForm = {
 
