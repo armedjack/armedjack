@@ -30,8 +30,8 @@ from google.appengine.ext import db
 from google.appengine.api import memcache
 
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
-jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
-							   autoescape = True)
+jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir))#,
+							   #autoescape = True)
 SESSION_EXPIRES = 3 #сколько дней храним сессию
 
 app_path = {'main'	: '/',
@@ -44,7 +44,7 @@ app_path = {'main'	: '/',
 secret = '_Long_123_Secret_456_String_789_' #следует сохранить отдельно
 
 ##########################################################################
-#Технические функции #
+#Вспомогательные функции #
 ##########################################################################
 
 def make_hash(*args): # создание хеша из полученных аргументов
@@ -83,6 +83,31 @@ def valid_password(password):
 EMAIL_RE  = re.compile(r'^[\S]+@[\S]+\.[\S]+$')
 def valid_email(email):
 	return not email or EMAIL_RE.match(email)
+
+#########################################################
+
+class Nestedobject (object):
+
+	def __init__ (self, m, r, nest_level = 0):
+		self.msg = m
+		self.replies = r
+		self.nest_level = nest_level # иерархический уровень комментария (нужно для определения какого уровня не делаем отступ в html-шаблоне)
+			
+def nest (flow, root_rep_key_list, deep = 0): #рекурсивное создание древовидной структуры из плоского списка предков и потомков
+	msglist = []
+	nested_comments = []
+	deep += 1 #глубина рекурсии = иерархический уровень комментария
+
+	for key in root_rep_key_list: #с помощью полученного списка ключей корневых ответов составляем список объектов-ответов выбирая из плоского списка
+		if key in flow:
+			msglist.append(flow[key])		
+
+	for msg in msglist: # добавляем к массиву-результату сообщения. если у них есть ответы (replies), то вызываем рекурсивно функцию, со списком ключей ответов. если нет ответов то присваеваем значение None
+		nested_comments.append(Nestedobject (msg, nest(flow, msg.replies, deep) if msg.replies else None, deep))		
+	return nested_comments
+
+
+#########################################################
 
 ##########################################################################
 #Модель пользователя
@@ -136,6 +161,7 @@ class Comment (db.Model):
 	text = db.TextProperty(required = True)
 	author = db.StringProperty()
 	created = db.DateTimeProperty(auto_now_add = True)
+	replies = db.ListProperty(db.Key)
 ##########################################################################
 #Модели сраниц
 ##########################################################################
@@ -229,38 +255,43 @@ class PostHandler (MainHandler):
 	
 	def get (self, post_id, com_id): #выводим пост с комментариями
 		p=Post.get_by_id(int(post_id))		
-		com_flow = Comment.all().ancestor(p)
-		new_com_flow = []
-		i = 0
-		for com in com_flow:#определяем отступы для комментариев	
-
-			new_com_flow.append(com) #составляем новый массив из элементов Comment
-			ident_value = len(com.key().to_path())/2 - 2 #считаем отступ на основе длины пути (каждая ступень иерархии - два слова, первые два слова - уровень поста - нулевой)
-			
-			if ident_value>3: ident_value = 3 #максимальный отступ - 3
-		 	
-		 	setattr(new_com_flow[i], 'ident', ident_value )#добавляем каждому элементу массива параметр ident
-		 	
-		 	i += 1		
-		logging.error(new_com_flow[3].parent().key())
 		if p:
-			self.render("post.html", msg = p, com_flow = new_com_flow)
+			com_flow = Comment.all().ancestor(p)
+
+			com_index = {}
+			root_com_list = []
+			for com in com_flow:
+				com_index[com.key()] = com #создаем хеш ключ:объект (индекс по ключу)
+				if len(com.key().to_path()) == 4: #если коментарий к посту, а не к другому комментарию, то заносим его в список "корневых" коментариев
+												  #path корневого комента содержит 4 элемента: ['Post', id поста, 'Comment', id коммента]
+					root_com_list.append(com.key()) 		
+
+			nested_comments = nest (com_index, root_com_list)			
+			self.render("post.html", msg = p, com_flow = nested_comments)
+		
+
 
 	def post (self, post_id, com_key): #добавляем комментарий
 		text = self.request.get("content")		
 		if self.user and text:
 			p = Post.get_by_id(int(post_id))
-			if com_key is not None: #если был получен ИД комментария, значит добавляем ответ на комментарий (дочерний комментарий)
-				parent = db.Key(encoded = com_key) 				
-			else:# если ид коммента не получен, значит добавляем обычный комментарий 
-				parent = p 
-			c = Comment (parent = parent, text = text, author = self.user.name)
+
+			if com_key is not None: #если был получен ИД комментария, значит добавляется ответ на комментарий 
+				parent_key = db.Key(encoded = com_key) 	
+
+			else:# если ид коммента не получен, значит добавляем обычный(корневой) комментарий к посту
+				parent_key = p 
+
+			c = Comment (parent = parent_key, text = text, author = self.user.name)# сохраняем комментарий
 			c.put()
-			logging.error(c.parent())
+			
 			#!!!сделать проверку успешной записи комментария и если ок, то увеличить счетчик комментариев.
-			p.comments +=1
+			p.comments +=1		#увеличиваем счетчик комментариев в посте
 			p.put()
 
+			parent = Comment.get(parent_key)#добавляем новый ключ в список ответов на коментарий
+			parent.replies.append(c.key())
+			parent.put()
 				
 		self.redirect(app_path['blog']+'/'+post_id)
 
@@ -333,8 +364,45 @@ class Login(MainHandler):
 class Logout(MainHandler):
 	"""Модель для страницы выхода"""
 	def get(self):
+
 		self.logout()
 		self.redirect(app_path['main'])
+
+
+class Maintance (MainHandler):
+
+	def get(self):
+		####
+		posts = Post.all()
+		output = ''
+		temp = ''
+		for p in posts:			
+			output += u"<br><b>Пост #</b>"+str(p.key().id())+"<br>"
+			com_flow = Comment.all().ancestor(p)			
+
+			for com in com_flow:
+				output += u"<br> Комментарий #"+str(com.key().id())+"<br>"
+				descendants = Comment.all().ancestor(com)
+				com.replies = []
+				for d in descendants:
+					output += u"<br> Комментарий #"+str(com.key().id())+"<br>"
+					if com.key() == d.parent_key() :						
+						com.replies.append(d.key())
+						temp = com.key()
+						
+					com.put()
+
+		# t = Comment.get(temp)
+		# rr = Comment.get(t.replies[0])
+		# logging.error(rr.author)
+
+
+
+
+
+		####
+		self.render('mnt.html', output = output)
+
 
 	
 logging.getLogger().setLevel(logging.DEBUG)
@@ -342,7 +410,8 @@ app = webapp2.WSGIApplication([(app_path['main'], Front)
 								,(app_path['signup'],Signup)
 								,(app_path['login'], Login)
 								,(app_path['blog']+'/([0-9]+)/*(.+)*', PostHandler)								
-								,('/logout', Logout)
+								,(app_path['logout'], Logout)
+								,('/mnt', Maintance)
 								],
 							  debug=True)
 

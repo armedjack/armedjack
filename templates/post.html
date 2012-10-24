@@ -19,22 +19,26 @@
 			</div>
 			<div class="message-body">{{msg.text}}</div>		
 		</div>
-
-		{% for com in com_flow%}
-			<div class="com ident{{com.ident}}">
-				<div class="com-heading">					
-					<div class="com-created">{{com.created.strftime("%d %b %Y")}}</div>
-					<div class="com-author"><img src="../img/user.png">{% if com.author%}{{com.author}}{% else %}Балбес{% endif %}</div>
+		<div class="com-replies">
+		{% for com in com_flow recursive %}		
+		<div class="comment">
+			<div class="com-msg">
+				<div class="com-heading">	<img src="../img/user.png">				
+					<div class="com-author">{% if com.msg.author%}{{com.msg.author}}{% else %}Балбес{% endif %}</div>
+					<div class="com-created">{{com.msg.created.strftime("%d %b %Y")}}</div>					
 				</div>
-				<div class="com-body">{{com.text}}<br><a class="com-answer " href="" data-key="{% if com.ident != 3%}
-						{{com.key()}}
-					{% else %}
-						{{com.parent().key()}}
-					{% endif %}">Ответить</a></div>				
+				<div class="com-body">{{com.msg.text}}<br><a class="com-answer" href="" data-key="{{com.msg.key()}}">Ответить</a></div>	
+			
 
+			</div> <!-- содержимое комментария -->
+			<div class="com-replies{% if com.nest_level > 11 %}_0{% endif %}"> <!-- ответы на комментарий (который в свою очередь тоже являются комментариями) -->
+			{% if com.replies %} <!-- рекурсивный обход по списку ответов  --> 
+				{{ loop(com.replies) }}
+			{% endif %}
 			</div>
+		</div>			
 		{% endfor %}
-
+		</div>
 
 {% if user %}	
 	<div><form action="{{blog}}/{{msg.key().id()}}" method="post">				
@@ -46,8 +50,16 @@
 
 <script type="tmpl" id="com-answ">/*шаблон для формы комментирования*/
 	<form class="com-answer_form" action="{{blog}}/{{msg.key().id()}}/" method="post">
-	    <textarea name="content" cols="20" rows="3"></textarea>
-	    <input type="submit">
+	    <textarea name="content"></textarea>  
+    	<div class = bottom>
+			<div class="bottom_left">
+				
+			</div>
+			<div class="bottom_right">
+				<input type="submit">							
+			</div>
+			
+		</div>
 	</form>	
 </script>
 <script>
@@ -55,25 +67,30 @@
 (function ($) {
 
     $('html').addClass('js');
-/*добавления дочернего комментария (ответа на комментарий)*/
+/*добавление дочернего комментария (ответа на комментарий)*/
     var f = $('#com-answ').html();   
-    $('a.com-answer').on('click', function(event){
-    	
-    	if ($(this).siblings('form').length) {
-    		$(this).siblings('form').remove();
-    		/*console.log('exist!')*/
-    	}
-    	else {
-    		$(f).insertAfter(this);
-    		var key = $(this).attr('data-key'), /*считываем key комментария на который отвечаем*/
-    			new_action = $(this).siblings('form').attr('action')+key; /*добавляем key родительского комментария в action формы для передачи на сервер*/
-    		$(this).siblings('form').attr('action', new_action)
-    		console.log($(this).siblings('form'))
-    		
-    	}
-    	
-    	event.preventDefault();
-    	console.log ();
+    $(document).on('click', function(event){   
+	    $this = $(event.target);
+
+	    if ($(event.target).hasClass('com-answer')){
+	    	
+	     
+	    	if ($this.siblings('form').length) {
+	    		$this.siblings('form').remove();
+	    		console.log('exist!')
+	    	}
+	    	else {
+	    		$(f).insertAfter($this);
+	    		var key = $this.attr('data-key'), /*считываем key комментария на который отвечаем*/
+	    			new_action = $this.siblings('form').attr('action')+key; /*добавляем key родительского комментария в action формы для передачи на сервер*/
+	    		$this.siblings('form').attr('action', new_action)
+	    		console.log($this.siblings('form'))
+	    		
+	    	}
+	    	
+	    	event.preventDefault();
+	    	
+	    }
     })
 /*конец добавления дочернего комментария*/
 
