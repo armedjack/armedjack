@@ -14,8 +14,10 @@
 		<div class="message">
 			<div class="message-heading">
 				<div class="message-title">{{msg.title}}</div>
-				<div class="message-created">{{msg.created.strftime("%d %b %Y")}}</div>
-				<div class="message-author"><img src="../img/user.png">{% if msg.author%}{{msg.author}}{% else %}Балбес{% endif %}</div>
+				<img src="../img/user.png">
+				<div class="message-author">{% if msg.author%}{{msg.author}}{% else %}Балбес{% endif %}</div>
+				<div class="message-created">{{msg.created.strftime("%d %b %Y")}}</div>									
+				<div class="clear"></div>	
 			</div>
 			<div class="message-body">{{msg.text}}</div>		
 		</div>
