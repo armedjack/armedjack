@@ -156,6 +156,7 @@ class Post (db.Model):
 	comments = db.IntegerProperty(default = 0)
 	author = db.StringProperty()
 	created = db.DateTimeProperty(auto_now_add = True)
+	replies = db.ListProperty(db.Key)
 
 class Comment (db.Model):
 	text = db.TextProperty(required = True)
@@ -261,12 +262,9 @@ class PostHandler (MainHandler):
 			com_index = {}
 			root_com_list = []
 			for com in com_flow:
-				com_index[com.key()] = com #создаем хеш ключ:объект (индекс по ключу)
-				if len(com.key().to_path()) == 4: #если коментарий к посту, а не к другому комментарию, то заносим его в список "корневых" коментариев
-												  #path корневого комента содержит 4 элемента: ['Post', id поста, 'Comment', id коммента]
-					root_com_list.append(com.key()) 		
+				com_index[com.key()] = com #создаем хеш ключ:объект (индекс по ключу)					
 
-			nested_comments = nest (com_index, root_com_list)			
+			nested_comments = nest (com_index, p.replies)			
 			self.render("post.html", msg = p, com_flow = nested_comments)
 		
 
@@ -278,9 +276,11 @@ class PostHandler (MainHandler):
 
 			if com_key is not None: #если был получен ИД комментария, значит добавляется ответ на комментарий 
 				parent_key = db.Key(encoded = com_key) 	
+				parent = Comment.get(parent_key)# получаем объект родителя для обновления данных
 
 			else:# если ид коммента не получен, значит добавляем обычный(корневой) комментарий к посту
 				parent_key = p 
+				parent = p
 
 			c = Comment (parent = parent_key, text = text, author = self.user.name)# сохраняем комментарий
 			c.put()
@@ -289,7 +289,7 @@ class PostHandler (MainHandler):
 			p.comments +=1		#увеличиваем счетчик комментариев в посте
 			p.put()
 
-			parent = Comment.get(parent_key)#добавляем новый ключ в список ответов на коментарий
+			
 			parent.replies.append(c.key())
 			parent.put()
 				

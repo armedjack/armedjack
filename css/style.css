@@ -771,7 +771,7 @@ input[type=submit] {
 	line-height: 1.5em;
 }
 
-.message-created {		
+.message-created, .com-created {		
 	
 	font-size: 0.7em;
 	font-color: #444;
@@ -781,9 +781,9 @@ input[type=submit] {
 
 }
 
-.message-author {	
+.message-author, .com-author{	
 	color: #666;
-	font-size: 0.9em;	
+	font-size: 0.8em;	
 	padding:10px 0px 0px 5px; 
 	font-weight: bold;
 	float:left;
@@ -905,21 +905,7 @@ input[type=submit] {
 }
 
 
-.com-created {
-	float: left;
-	font-size: 0.7em;
-	font-color: #444;
-	padding:12px 0px 0px 5px;
 
-
-
-}
-
-.com-author {
-	float: left;	
-	font-size: 0.9em;
-	padding:10px 0px 0px 5px; 
-}
 
 .com-heading img {
 	width: 36px;
