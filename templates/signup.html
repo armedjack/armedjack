@@ -1,43 +1,42 @@
 {% extends "base.html" %}
 {% block content %}
 
-	<h2>Регистрация</h2>
+	
 	
 	<div class="signup-form"> 
+		<h2>Регистрация</h2>
 		<form method="post">	
 
-			<div class="form-line">			
-				<div class="label">Username</div>
-				<input type="text" name="username" value="{{username}}" />	
-				{% if error_username%} <div class="error">{{error_username}}</div> {% endif %}
-				{% if error == 'ExistUserError' %} <div class="error">This user already exist</div> {% endif %}
-				
-				
-			</div>		
+					
+			<p class="login-form">
+				<label for="name" class="login-label">Имя пользователя:</label>
+				<input id="name" class="input-text" type="text" name="username" value="{{username}}" />	
+				{% if error_username%}<span class="error">Это не подходящее имя пользователя.</span> {% endif %}
+				{% if error == 'ExistUserError' %} <span class="error">This user already exist</span> {% endif %}
+			</p>	
+					
+			<p class="login-form">
+				<label for="pwd" class="login-label">Пароль:</label>
+				<input id="pwd" class="input-text" type="password" name="password" />				
+				{% if error_password%} <span class="error">Пароль не подходит. Попробуйте ещё раз.</span> {% endif %}
+			</p>
 			
 
-			<div class="form-line">
-				<div class="label">Password</div>
-				<input type="password" name="password" />				
-				{% if error_password%} <div class="error">{{error_password}}</div> {% endif %}
+			<p class="login-form">
+				<label for="pwd2" class="login-label">Ещё раз пароль:</label>
+				<input id="pwd2" class="input-text" type="password" name="verify" />				
+				{% if error_verify%} <span class="error">Введённые пароли не совпадают.</span> {% endif %}
 				
-			</div>
+			</p>
 
-			<div class="form-line">
-				<div class="label">	Verify password</div>
-				<input type="password" name="verify" />				
-				{% if error_verify%} <div class="error">{{error_verify}}</div> {% endif %}
-				
-			</div>
+			<p class="login-form">
+				<label for="email" class="login-label">Ваш e-mail:</label>
+				<input id="email" class="input-text" type="text" name="email" value="{{email}}" />				
+				{% if error_email%} <span class="error">Это не правильный адрес e-mail.</span> {% endif %}					
 
-			<div class="form-line">
-				<div class="label">Email(optional)</div>
-				<input type="text" name="email" value="{{email}}" />				
-				{% if error_email%} <div class="error">{{error_email}}</div> {% endif %}		
-				
-			</div>	
-			<div class="form-line"></div>
-			<input type=submit>
+			</p>
+			<input type=submit class="button-type-2">
+			
 		
 		</form>
 	</div>

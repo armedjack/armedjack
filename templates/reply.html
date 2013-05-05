@@ -1,0 +1,23 @@
+{% if com != "Error" %}
+<div class="comment" id="{{com.key().id()}}">
+	<div class="com-msg">		
+		<div class="com-heading">	<img src="../img/blog-default-image.jpg">			
+			<div class="com-author">{% if com.author%}{{com.author}}{% else %}Балбес{% endif %}</div>
+			<div class="com-created">{{com.make_rudate()}}</div>					
+		</div>
+		<div class="com-body">{{com.text}}</div>
+		<a class="com-answer" href="">Ответить</a>
+{% else %}		
+<div class="comment">
+	<div class="com-msg">
+		<div class="com-heading">	<img src="../img/blog-default-image.jpg">			
+			<div class="com-author">Хакер</div>
+			<div class="com-created">00:00</div>					
+		</div>
+		<div class="com-body"><p class="error">Ошибочка вышла</p></div>		
+{% endif %}
+
+	</div> <!-- содержимое комментария -->
+	<div class="com-replies{% if nest_level > 11 %}_0{% endif %}">	
+	</div>
+</div>			

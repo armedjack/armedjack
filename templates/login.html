@@ -1,25 +1,31 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h2>Login</h2> 
-	<div class="login-form">       
+    <div class="login-form">       
+    
+        <h2>Вход</h2> 	
         <form method="post">
-
-            <div class="form-line">
-            	<div class="label">Username</div>
-            	<input type="text" name="username" value="{{username}}">
-            </div>
+            <p class="login-form">
+                <label for="name" class="login-label">Имя пользователя:</label>
+                <input id="name" type="text" name="username" value="{{username}}" class="input-text">
+            </p>
             
-            <div class="form-line">
-            	<div class="label">Password</div>
-            	<input type="password" name="password" value="">
-            </div>       <div class="error">
+            <p  class="login-form">
+            	<label for="pass" class="login-label">Пароль:</label>
+            	<input id="pass" type="password" name="password" value="" class="input-text">
+            </p>
+            {% if error %}
+            <div class="clear"></div><p class="error">
                 {{error}}
-            </div>
-        	<div class="form-line"></div>
-        		<input type=submit>
+            </p>
+            {% endif %}
+    	
+    		<input type=submit class="button-type-2">
+            <div class="clear"></div>
+            <a href="/signup">Срочно зарегистрироваться!</a>
     	</form>
-        <a href="/signup">Срочно зарегистрироваться!</a>
+        
+    
 	</div>
 
 

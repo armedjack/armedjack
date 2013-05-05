@@ -1,0 +1,12 @@
+<div class="comment" id="{{com.msg.key().id()}}">
+	<div class="com-msg">
+		<div class="com-heading">	<img src="../img/user.png">				
+			<div class="com-author">{% if com.msg.author%}{{com.msg.author}}{% else %}Балбес{% endif %}</div>
+			<div class="com-created">{{com.msg.created.strftime("%d %b %Y")}}</div>					
+		</div>
+		<div class="com-body">{{com.msg.text}}</div>
+		<a class="com-answer" href="">Ответить</a>
+	</div> <!-- содержимое комментария -->
+	<div class="com-replies{% if com.nest_level > 11 %}_0{% endif %}">	
+	</div>
+</div>			

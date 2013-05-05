@@ -1,36 +1,146 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://gmpg.org/xfn/11"> 
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/> 
+<meta http-equiv="Content-Style-Type" content="text/css"/>
+<meta name="viewport" content="width=device-width" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<title>Little One Trip</title>
+<link rel="stylesheet" href="/css/style.css" type="text/css" />
+<link href='http://fonts.googleapis.com/css?family=Ubuntu+Condensed&subset=latin,cyrillic-ext' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Bad+Script&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+</head>
+<body {% if user and user.name %}  class="goodwood" {%endif%}>
 
-<head>
-	<title>Простенький блог</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<link rel="stylesheet" href="/css/style.css" type="text/css" />
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
-	<link href='http://fonts.googleapis.com/css?family=Russo+One&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
-</head>	
+{% if user and user.check_power('blog_post') %}   
+<div class="quickpost"></div>    
+<div class="form_container">
+    <div class="black_background"></div>
 
-<body>
+    <div class="reply">
+        <div class="close-btn">X</div>
+        
+        <form action="/" method="post"> 
+            <h2>Новый пост</h2>
+            <ul>
+                <li>
+                    <label for="name" class="reply-label">Заголовок поста:</label>
+                    <input class="input-text" type="text" id="subject" name="subject" value="{{title}}"/>
+                    <div class="clear"></div>
+                </li>           
+                <li>
+                    <label for="name" class="reply-label">Текст поста:</label>
+                    <textarea class="reply-comment" name="content">{{text}}</textarea><div class="clear"></div>
+                </li>
+                <li> <p class="error">{{error}}</p></li>
+               
+            </ul>
+        </form>
+    </div>
+
+</div>
 
 
-<div class="wrap">				
-	<div class="header">
-		<div class="header_staff">
-			<h1><a href="/">Простенький блог</a></h1>
-			<ul class="login_nav">
-				{% if user%}				
-				<li>Привет, {{user.name}}! (<a class="logout" href="{{logout}}">выйти</a>)</li>
-				{% else %}
-				<li><a href="{{login}}">ВОЙТИ</a></li>
-				<li><a href="{{signup}}">ЗАРЕГИСТРИРОВАТЬСЯ</a></li>				
-				{% endif %}
-			</ul>
+       
+{% endif %} 
+
+<!-- Clouds background image -->
+
+<div id="top-bg">
+    <div id="wrap">
+    <a href="#" id="top-link">вверх</a>
+    	<div id="top-nav-bar">
+        	<a href="\" class="logo"><img src="/img/logo.png" alt="Little One Trip" /></a>
+            <input class="text-input" />
+            <input type="submit" class="submit" value="" />
+        	<div id="nav-wrap">
+                <ul id="prime-nav">
+                	<li><a href="\" id="main">Главная</a></li>
+                    <li><a href="\" id="blogs">Блоги</a></li>                  
+                    <li id="test1"><a id="gallery" class="disabled">Галерея</a></li>
+                    <li><a id="arch" class="disabled">Архивы</a></li>    
+                    <li><a id="contacts" class="disabled">Контакты</a></li>
+                    
+                    <ul id="user-nav">
+                    {% if user%}
+                        <li>Привет,</li>
+                        <li><a href="">{{user.name}}</a>!</li>
+                        <li>(<a href="\logout">выйти</a>)</li>
+                    {%else%}
+                        <li><a href="\login">Войти</a></li>
+                        <li>&nbsp;|&nbsp;</li>
+                        <li><a href="\signup">Регистрация</a><li>
+                    {%endif%}
+                    </ul>
+
+                </ul>
+                <div id="left-primenav-bg"></div>
+                <div id="right-primenav-bg"></div>
+            </div>
+        </div>
+        
+		<!-- Content -->
+        
+        <div id="content">
+        	<div class="content-bg-wrap">
+                {% block content %}{% endblock %}              
+            </div>
+                
+            <!-- Footer -->
+                
+			<div id="footer">
+				<div class="column-div widget-wrap">
+                    <div class="textwidget">
+                        <img src="/img/lot-logo-footer.png" />
+                        <p>Donec vitae ligula quam, ac mattis diam. Mauris vel leo in purus posuere interdum sit amet in nulla. Duis auctor viverra nisi, non condimentum enim dapibus sed. Phasellus in commodo lorem. Mauris in odio eu mauris cursus sodales et dapibus nisi. Suspendisse a nisl nec libero laoreet varius non quis metus. Nulla elementum varius facilisis. Etiam sodales tellus et nibh volutpat non mattis quam aliquam.</p>
+                    </div>
+              	</div>
+
+                <div class="column-div widget-wrap">
+                    <h5>Recent Posts</h5>
+                    <ul>
+                        <li><a title="Thousands of shortcodes" href="#">Thousands of shortcodes</a></li>
+                        <li><a title="Thousands of shortcodes" href="#">Thousands of shortcodes</a></li>
+                        <li><a title="Thousands of shortcodes" href="#">Thousands of shortcodes</a></li>
+                        <li><a title="Thousands of shortcodes" href="#">Thousands of shortcodes</a></li>
+                    </ul>
+                </div>
+
+                <div class="column-div widget-wrap"><h5>Pages</h5>
+                    <ul>
+                        <li><a title="Blog" href="#">Page Title Here</a></li>
+                        <li><a title="Blog" href="#">Page Title Here</a></li>
+                        <li><a title="Blog" href="#">Page Title Here</a></li>
+                        <li><a title="Blog" href="#">Page Title Here</a></li>
+                        <li><a title="Blog" href="#">Page Title Here</a></li>
+                    </ul>
+                </div>
+    
+                <div class="column-div widget-wrap"><h5>Extra Widget</h5>
+                    <ul>
+                        <li><a title="Blog" href="#">Extra Widget Title</a></li>
+                        <li><a title="Blog" href="#">Extra Widget Title</a></li>
+                        <li><a title="Blog" href="#">Extra Widget Title</a></li>
+                        <li><a title="Blog" href="#">Extra Widget Title</a></li>
+                        <li><a title="Blog" href="#">Extra Widget Title</a></li>
+                        <li><a title="Blog" href="#">Extra Widget Title</a></li>
+                    </ul>
+                </div>
+
+				<p class="rights">&copy; Copyright 2012. Little One Trip</p>
+
+				<div class="bottom-bg"></div>
+			</div>
 		</div>
 	</div>
-	<div class="content">
-	{% block content %}{% endblock %}			
-	</div>
-	<div class="page-buffer"></div>
-</div>	
-<div class="footer">©2012</div>
+
+	<!-- Footer background image -->
+
+    <div id="wrap-bottom">
+        <div class="bottom-bg"></div>
+    </div>
+</div>
 </body>
+
 </html>

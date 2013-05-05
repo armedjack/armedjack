@@ -1,170 +1,104 @@
 {% extends "base.html" %}
-
 {% block content %}	
-{% if user %}	
-	<div class="form_container"><form action="/" method="post">		
-		<div class="label">Здесь должен быть заголовок</div>
-		<input type="text" id="subject" name="subject" value="{{title}}">
-		<div class="label">Сюда можно писать свои мысли</div>
-		<textarea name="content">{{text}}</textarea>
-		<div class="error">{{error}}</div>
-	</form></div>
-{% endif %}	
-		<h2><a href="/">Простенький блог</a> \ {{msg.title}}</h2>
-		<div class="message">
-			<div class="message-heading">
-				<div class="message-title">{{msg.title}}</div>
-				<img src="../img/user.png">
-				<div class="message-author">{% if msg.author%}{{msg.author}}{% else %}Балбес{% endif %}</div>
-				<div class="message-created">{{msg.created.strftime("%d %b %Y")}}</div>									
-				<div class="clear"></div>	
-			</div>
-			<div class="message-body">{{msg.text}}</div>		
-		</div>
-		<div class="com-replies">
-		{% for com in com_flow recursive %}		
-		<div class="comment">
-			<div class="com-msg">
-				<div class="com-heading">	<img src="../img/user.png">				
-					<div class="com-author">{% if com.msg.author%}{{com.msg.author}}{% else %}Балбес{% endif %}</div>
-					<div class="com-created">{{com.msg.created.strftime("%d %b %Y")}}</div>					
-				</div>
-				<div class="com-body">{{com.msg.text}}<br><a class="com-answer" href="" data-key="{{com.msg.key()}}">Ответить</a></div>	
-			
 
+
+	
+<div class="full-width col-2-full">
+
+
+<div class="blog-post full-post" id="{{msg.key().id()}}">
+
+	<h2 class="page-heading">
+		<a href="/{{owner}}{{blog}}"><div class="back-btn"></div></a>{{msg.title}}
+	</h2>
+
+	<div class="blog-post-preview inpost">
+	<div class="top"></div>				
+	<div class="bottom"></div>
+	<a href="#" class="image-link">
+		<img src="/img/blog-list.png" alt="{{msg.title}}" />
+	</a>					
+	</div>
+	<div class="clear"></div>
+
+	<p class="details">
+		Автор: {% if msg.author%}{{msg.author}}{% else %}Балбес{% endif %} <br>Опубликовано в <a href="#">Uncategorized</a>
+	</p>
+
+<div class="hr heading-hr"></div>
+  
+	<p>{{msg.text}}</p>
+</div>
+<div class="comments-wrap">
+<div class="clear"></div>
+<h3>Комментариев: <div id="comments-count">{% if msg.comments %}{{msg.comments}}{% else %}0{% endif %}</div></h3>
+	<a id="comments"></a>
+	<div class="com-replies first">
+		{% for com in com_flow recursive %}		
+		<div class="comment{% if (com.nest_level > 1 and com_replies and com.replies|length > 5) or (com.nest_level == 3 and com.replies) %} collapse {% endif %}" id="{{com.msg.key().id()}}">
+			<div class="com-msg">
+				<img src="../img/blog-default-image.jpg">
+				<div class="com-heading">
+					<div class="com-author">{% if com.msg.author%}{{com.msg.author}}{% else %}Балбес{% endif %}</div>
+					<div class="com-created">{{com.msg.make_rudate()}}</div>					
+				</div>
+				<div class="com-body">{{com.msg.text}}</div>
+				<a class="com-answer" href="">{% if user and user.check_power('comment_post') %}Ответить{%else%}&nbsp;{% endif %}</a>
+			
 			</div> <!-- содержимое комментария -->
-			<div class="com-replies{% if com.nest_level > 11 %}_0{% endif %}"> <!-- ответы на комментарий (который в свою очередь тоже являются комментариями) -->
+			<div class="com-replies{% if com.nest_level > 6 %}_0{% endif %}"> <!-- ответы на комментарий (который в свою очередь тоже являются комментариями) -->
 			{% if com.replies %} <!-- рекурсивный обход по списку ответов  --> 
 				{{ loop(com.replies) }}
 			{% endif %}
 			</div>
 		</div>			
 		{% endfor %}
+	</div>
+		 
+
+</div>
+
+
+{% if user and user.check_power('comment_post') %}
+
+<form class="com-answer_form_last" action="{{blog}}/{{msg.key().id()}}/" method="post">
+    <textarea name="content" class="reply-comment"></textarea>  	    
+	<div class = bottom>
+		<div class="bottom_left">				
 		</div>
+		<div class="bottom_right">
+			<input type="submit" class="button-type-2">							
+		</div>
+		<div class="clear"></div>	
+		
+	</div>
 
-{% if user %}	
-	<div><form action="{{blog}}/{{msg.key().id()}}" method="post">				
-		<div class="label">Написать комментарий:</div>
-		<textarea name="content"></textarea>	
-		<input type="submit">
-	</form></div>
+</form>	
 
-
-<script type="tmpl" id="com-answ">/*шаблон для формы комментирования*/
+<script type="tmpl" id="com-answ"><!-- /*шаблон для формы комментирования*/-->
 	<form class="com-answer_form" action="{{blog}}/{{msg.key().id()}}/" method="post">
-	    <textarea name="content"></textarea>  
+	    <textarea name="content" class="reply-comment"></textarea>  	    
     	<div class = bottom>
-			<div class="bottom_left">
-				
+			<div class="bottom_left">				
 			</div>
 			<div class="bottom_right">
-				<input type="submit">							
+				<input type="submit" class="button-type-2">							
 			</div>
-			
+			<div class="clear"></div>				
 		</div>
+
 	</form>	
 </script>
-<script>
-
-(function ($) {
-
-    $('html').addClass('js');
-/*добавление дочернего комментария (ответа на комментарий)*/
-    var f = $('#com-answ').html();   
-    $(document).on('click', function(event){   
-	    $this = $(event.target);
-
-	    if ($(event.target).hasClass('com-answer')){
-	    	
-	     
-	    	if ($this.siblings('form').length) {
-	    		$this.siblings('form').remove();
-	    		console.log('exist!')
-	    	}
-	    	else {
-	    		$(f).insertAfter($this);
-	    		var key = $this.attr('data-key'), /*считываем key комментария на который отвечаем*/
-	    			new_action = $this.siblings('form').attr('action')+key; /*добавляем key родительского комментария в action формы для передачи на сервер*/
-	    		$this.siblings('form').attr('action', new_action)
-	    		console.log($this.siblings('form'))
-	    		
-	    	}
-	    	
-	    	event.preventDefault();
-	    	
-	    }
-    })
-/*конец добавления дочернего комментария*/
-
-/*создание сообщения(эффекты формы, кнопка вызова формы)*/
-
-    var postForm = {
-
-	config: {
-		qp_text1: 'Написать пост!',
-		qp_text2: 'X'
-	},
-
-	init: function(config){
-		$.extend (this.config, config);		
-
-		$('<div></div>', {
-			'text': postForm.config.qp_text1,
-			'class': 'js quickpost'
-		})
-			.prependTo($('body'))
-			.on('click', this.showhide)
-			.hover (				
-				function () {
-					var self = $(this);
-					if  (!self.hasClass('clicked')) {
-						self.css('width',100);
-					} 					
-				},
-				function () {
-					var self = $(this);
-					if  (!self.hasClass('clicked')) {self.css('width',95)}; 					
-				});		
-	},
-
-	showhide: function(){
-		var config = postForm.config,
-			container = $('div.form_container');			
-		$this = $(this);				
-
-		if ($this.hasClass('clicked')) {			 
-			$this.css('width',100).text(config.qp_text1);
-		}
-		else {			
-			$this.css('width',45).text(config.qp_text2);			
-		}				
-		$this.toggleClass('clicked'); 
-		container.slideToggle();
-		
-
-		if (container.find('input#button').length) return;
-
-		$('<input></input>',{
-			type: 'submit',
-			id: 'button'
-		})
-			.appendTo($('form'))
-			.on('click', function(event){
-				
-				if ($('input:first').val()=='' || $('form textarea').val()=='') {	
-					event.preventDefault();
-					$('div.error').text ('Необходим заголовок и текст. И то и другое!');
-				}
-
-			});
-			
-	}	
-}
-
-postForm.init();
-
-})(jQuery);	
-
-</script>
 {% endif %}
+
+</div>
+<script type="tmpl" id="col_btn"><!-- /*шаблон для кнопки свертки*/-->
+	<div class="col-btn">
+		Развернуть
+	</div>
+</script>
+
+
+
+<script src="../js/core.js"></script>
 {% endblock %}

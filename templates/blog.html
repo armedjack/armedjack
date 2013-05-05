@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<!-- Leftside -->
+<div class="leftside col-2-sidebar">
+	{% if not text_flow['error']%}
+		
+		{% for msg in text_flow%}
+            <div class="blog-post">
+				<div class="date-preview-wrap">
+	                <div>
+	                    <h6>{{msg.make_rudate('day')}}</h6>
+	                    <h6>{{msg.make_rudate('month')}}</h6>
+	                    <h6>{{msg.make_rudate('year')}}</h6>
+	                </div>
+				</div>
+				{% if msg.img %}
+				<div class="blog-post-preview">
+					<div class="top"></div>
+					<div class="bottom"></div>					
+					<a href="/{{owner}}{{blog}}/{{msg.key().id()}}" class="image-link">
+						<img src="../img/blog/{{msg.img}}" alt="{{msg.title}}" />
+					</a>					
+				</div>
+				{% endif %}
+				<h2><a href="/{{owner}}{{blog}}/{{msg.key().id()}}">{{msg.title}}</a></h2>
+				<p class="details">
+					Автор: {% if msg.author%}{{msg.author}}{% else %}Балбес{% endif %} <br>Опубликовано в <a href="#">Uncategorized</a>
+				</p>
+				<p>{{msg.text}}</p>
+				<p><div class="com-count"><a href="/{{owner}}{{blog}}/{{msg.key().id()}}#comments">{% if msg.comments %}{{msg.comments}}{% else %}0{% endif %}</a></div><a href="/{{owner}}{{blog}}/{{msg.key().id()}}" title="{{msg.title}}"><strong> Читать дальше</strong></a></p>
+			</div>
+
+		{% endfor %}
+		
+	{% else %}
+		<div class="message">
+			<div class="message-heading">
+				<div class="message-title">Что-то пошло не так.</div>				
+			</div>
+			<div class="message-body">{{text_flow['error']}}</div>
+		</div>
+	{%endif%}
+	
+</div>
+<!-- Right Sidebar -->
+<div id="sidebar">
+    
+    <!-- Kiddo Social Networks Widget -->
+
+    <div class="social-networks-widget">
+       	
+        <div class="first"><a class="facebook" href="https://facebook.com/"></a></div>
+        <div><a class="vkontakte" href="https://vk.com/"></a></div>        
+        <div><a class="twitter" href="https://twitter.com/"></a></div>        
+        <div class="bottom"></div>
+    </div>
+</div>
+
+
+<script src="../js/core.js"></script>	
+{% endblock %}
