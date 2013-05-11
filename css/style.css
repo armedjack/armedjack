@@ -100,7 +100,7 @@ body {
 	background-repeat:repeat-x;
 	background-position:left bottom;
 	height:640px;
-	margin-top:-550px;
+	margin-top: -550px;
 	z-index:9999;
 	position:static;
 	bottom:0;
@@ -3334,7 +3334,7 @@ div.blog-post {
 	float:left;
 	margin-bottom:20px;
 	padding-bottom:20px;
-	padding-left: 70px;
+	padding-left: 80px;
 	background-image:url(../img/thumb-read-more-tilegif.gif);
 	background-position:left bottom;
 	background-repeat:repeat-x;
@@ -3597,20 +3597,38 @@ div#comments-count {
 .com-replies_0{
 	margin-left: 0px;	
 }
+/*div.smooth-hidden*/
+ div.collapse > div.com-replies {
 
-div.smooth-hidden, div.collapse > div.com-replies {
+	/*position: absolute;
+	/*opacity: 0;	*/
+	/*-webkit-transform: translate3d(0, 0, 0);
+	visibility: hidden;
+	left: -9999px;*/	
+	/*height: 0;*/
+	/*width: 700px;*/
 
-	position: absolute;
-	opacity: 0;	
-	-webkit-transform: translate3d(0, 0, 0);
-/*	display: none;
-	width: 700px;*/
+	display: block;
+	 opacity: 0; 
+    height: 0;
+    overflow: hidden;
+    -webkit-transition: opacity 1s ease;
+  
 		
 
 }
 
 div.smooth-showed {			
-	position: relative !important;			
+	/*position: relative !important;*/
+	/*visibility: visible;
+	position: static;
+	left: 0px;
+	display: block;	*/
+	opacity: 1 !important;
+    height: auto !important;
+    
+	/*-webkit-transition: height 1s ease-out;*/
+	
 }
 
 /*.col-btn {
@@ -3686,7 +3704,7 @@ div.close-btn:hover, div.col-btn:hover, div.com-count:hover, div.back-btn:hover 
 
 div.com-count {	
 	bottom: 35px;
-	left: 165px;	
+	left: 175px;	
 }
 
 

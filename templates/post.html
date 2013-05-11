@@ -13,16 +13,19 @@
 	</h2>
 
 	<div class="blog-post-preview inpost">
+	
+	{% if msg.header_img%}
 	<div class="top"></div>				
 	<div class="bottom"></div>
 	<a href="#" class="image-link">
-		<img src="/img/blog-list.png" alt="{{msg.title}}" />
-	</a>					
+		<img src="/img/{{msg.header_img}}" alt="{{msg.title}}" />
+	</a>			
+	{% endif %}		
 	</div>
 	<div class="clear"></div>
 
 	<p class="details">
-		Автор: {% if msg.author%}{{msg.author}}{% else %}Балбес{% endif %} <br>Опубликовано в <a href="#">Uncategorized</a>
+		Автор: {% if msg.author%}<a id="owner">{{msg.author}}</a>{% else %}Балбес{% endif %} <br>Опубликовано в <a href="#">Uncategorized</a>
 	</p>
 
 <div class="hr heading-hr"></div>
@@ -37,7 +40,7 @@
 		{% for com in com_flow recursive %}		
 		<div class="comment{% if (com.nest_level > 1 and com_replies and com.replies|length > 5) or (com.nest_level == 3 and com.replies) %} collapse {% endif %}" id="{{com.msg.key().id()}}">
 			<div class="com-msg">
-				<img src="../img/blog-default-image.jpg">
+				<img src="/img/blog-default-image.jpg">
 				<div class="com-heading">
 					<div class="com-author">{% if com.msg.author%}{{com.msg.author}}{% else %}Балбес{% endif %}</div>
 					<div class="com-created">{{com.msg.make_rudate()}}</div>					
@@ -60,7 +63,7 @@
 
 
 {% if user and user.check_power('comment_post') %}
-
+<div class="clear"></div>
 <form class="com-answer_form_last" action="{{blog}}/{{msg.key().id()}}/" method="post">
     <textarea name="content" class="reply-comment"></textarea>  	    
 	<div class = bottom>
@@ -100,5 +103,5 @@
 
 
 
-<script src="../js/core.js"></script>
+<script src="/js/core.js"></script>
 {% endblock %}

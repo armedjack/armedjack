@@ -44,21 +44,23 @@ var mobile = isMobile.any();
 /*********плавный slidetoggle**********/
 	var smooth = function (block) {
 
-			var height = block.height();
+			/*var height = block.height();*/
+
+			block.toggleClass('smooth-showed');
 					
-			if ( block.hasClass('smooth-showed') ) {
+			// if ( block.hasClass('smooth-showed') ) {
 				
-			    block.animate({ height: 0, opacity: 0 }, { duration: 400, complete: function () {		
-				block.height(height);		     		      
-			  	block.removeClass('smooth-showed').addClass('smooth-hidden');} 
-			    });
-			  } else {
+			    /*block.animate({ height: 0, opacity: 0 }, { duration: 400, complete: function () {		
+				block.height(height);		*/     		      
+			  	// block.removeClass('smooth-showed').addClass('smooth-hidden');//} 
+			    //});
+			  // } else {
 			  		
-			  		block.height(0);			  		
-			  		block.addClass('smooth-showed').removeClass('smooth-hidden');
-			    	block.show().animate({ height : height, opacity: 1 }, { duration: 400});
-			    			    		 		
-				};
+			  		/*block.height(0);		*/	  		
+			  		// block.addClass('smooth-showed').removeClass('smooth-hidden');
+			    	/*block.show().animate({ height : height, opacity: 1 }, { duration: 400});
+*/			    			    		 		
+				// };
 
 		};
 /**************************************/
@@ -125,6 +127,7 @@ var replyForm = { /*Объект - форма ответа на коммент*/
     					  .submit(function (event) {
     					  		event.preventDefault();
     					  		post_id = $('div.blog-post').attr('id');
+    					  		
     					  		args = {submitedForm:this, post_id:post_id, ancestors:ancestors};			  		
     					  		$.publish('data/submited', args);
     					  		
@@ -136,10 +139,11 @@ var replyForm = { /*Объект - форма ответа на коммент*/
 		for (val in args) {window[val] = args[val];}		
 		if (typeof ancestors === 'undefined'){ancestors = ''; parent_id = '';}
 		console.log(ancestors);
-		$submitedForm = $(submitedForm);				
+		$submitedForm = $(submitedForm);	
+		console.log (owner.text);				
 		$.ajax ({
 			type: 'POST',
-			url:'/ajx/addreply/'+post_id,
+			url:'/ajx/addreply/'+owner.text+'/'+post_id,
 			data: $submitedForm.serialize()+'&ancestors='+ancestors,
 			success: function (data) {				
 				args = {reply:data, parent_id: ancestors[ancestors.length-1], post_id:post_id};

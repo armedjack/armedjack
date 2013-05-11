@@ -1,7 +1,7 @@
 {% if com != "Error" %}
 <div class="comment" id="{{com.key().id()}}">
 	<div class="com-msg">		
-		<div class="com-heading">	<img src="../img/blog-default-image.jpg">			
+		<div class="com-heading">	<img src="/img/blog-default-image.jpg">			
 			<div class="com-author">{% if com.author%}{{com.author}}{% else %}Балбес{% endif %}</div>
 			<div class="com-created">{{com.make_rudate()}}</div>					
 		</div>

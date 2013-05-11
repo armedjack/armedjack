@@ -220,12 +220,14 @@ class Post (BlogEntry):
 	comments = db.IntegerProperty(default = 0)
 	author = db.StringProperty()
 	created = db.DateTimeProperty(auto_now_add = True)
+	edited = db.DateTimeProperty(auto_now_add = True)
 	replies = db.ListProperty(int)
 
 class Comment (BlogEntry):
 	text = db.TextProperty(required = True)
 	author = db.StringProperty()
 	created = db.DateTimeProperty(auto_now_add = True)
+	edited = db.DateTimeProperty(auto_now_add = True)
 	replies = db.ListProperty(int)
 ##########################################################################
 #Модели сраниц
@@ -329,30 +331,41 @@ class PostHandler (MainHandler):
 				path +=['Comment', int(comm_id)]
 		return path
 
-	def add_reply(self, post_id, id_string):
+	def add_reply(self, owner, post_id, id_string = None, edit_mode = False):
 		text = self.request.get("content")		
 		if text:
-			p = Post.get_by_id(int(post_id), parent = users_key(owner))
+			parent = users_key(owner)
+			p = Post.get_by_id(int(post_id), parent = parent)
 
-			if id_string:#если строка с id предков не пустая, то собираем ключ из id всех родителей
-				parent_path = self.make_path(post_id, id_string)#собираем путь до сущности родителя из id переданных из браузера
-				parent_key = db.Key.from_path(*parent_path)	#создаем из пути ключ
-				parent = db.Model.get(parent_key) #получаем сущность предка из датастора
-			else: parent = p #если строка с id пустая, значит родителем будет пост, его сущность уже получена ранее
+			if id_string: # если передан id комментария (строка с ид предков и самого коммента), то операция с комментарием
+				logging.error("entry - comment")
+				entry_path = self.make_path(post_id, id_string)#собираем путь до сущности из id переданных из браузера
+				entry_key = db.Key.from_path(*entry_path, parent = parent)	#создаем из пути ключ
+				entry = db.Model.get(parent_key) #получаем сущность из датастора				
+			else: # если нет строки с id то значит операция с постом
+				logging.error("entry - post")
+				entry = p		
 
-			c = Comment (parent = parent, text = text, author = self.user.name)# сохраняем комментарий
-			c.put()
-			
-			parent.replies.append(c.key().id())#добавляем ответ к списку коментариев-потомков(ответов) родителя
-			p.comments +=1		#увеличиваем счетчик комментариев в посте
-			#!!!сделать проверку успешной записи комментария и если ок, то увеличить счетчик комментариев.
-			
-			p.put()			
-			if p != parent: parent.put() #если родитель не пост, то тоже его сохраняем
-			return c
+			if edit_mode: #редактируем сущность
+
+				entry.text = new_text
+				entry.edited = datetime.datetime.now()
+				entry.put()
+				return entry
+
+			else:#добавление комментария, entry - родитель нового комментария
+				c = Comment (parent = entry, text = text, author = self.user.name)# сохраняем комментарий
+				c.put()			
+				entry.replies.append(c.key().id())#добавляем id к списку id коментариев-потомков(ответов) родителя
+				p.comments +=1		#увеличиваем счетчик комментариев в посте
+				#!!!сделать проверку успешной записи комментария и если ок, то увеличить счетчик комментариев.
+				
+				p.put()			
+				if p != entry: entry.put() #если родитель не пост, то тоже его сохраняем
+				return c
 		else:
 			self.redirect(app_path['main'])#!!!!!!обработка ошибки пустого текста
-	
+
 	def get (self,  owner, post_id, com_id): #выводим пост с комментариями
 		p=Post.get_by_id(int(post_id), parent = users_key(owner))		
 		if p:
@@ -370,7 +383,7 @@ class PostHandler (MainHandler):
 
 	def post (self,  owner, post_id, comment_id): #добавляем комментарий
 		if self.user and self.user.check_power('comment_post'):			
-			self.add_reply (post_id, comment_id)					
+			self.add_reply (post_id, comment_id, owner)					
 			self.redirect('/'+owner+app_path['blog']+'/'+post_id)
 		else:
 			self.redirect(app_path['login'])
@@ -452,14 +465,14 @@ class Logout(MainHandler):
 
 class AjaxHandler(PostHandler):
 
-	def post(self, case, post_id):
+	def post(self, case, owner, post_id):
 
 		if self.user:
 			if case == 'addreply':			
 				tribe_id = self.request.get('ancestors') #список id предков			
 				if self.user.check_power('comment_post'):
 					text = self.request.get("content")				
-					c = self.add_reply (post_id, tribe_id)
+					c = self.add_reply (owner, post_id, tribe_id)
 					self.render('reply.html', com = c, nest_level = len(re.split(',',tribe_id)))
 				else:
 					self.render('reply.html', com = "Error", nest_level = len(re.split(',',tribe_id)))
@@ -537,7 +550,7 @@ app = webapp2.WSGIApplication([(app_path['main'], Blog)
 								,(app_path['signup']+'/*',Signup)
 								,(app_path['login']+'/*', Login)								
 								,(app_path['logout']+'/*', Logout)
-								,(app_path['ajax']+'/(.+)/([0-9]+)', AjaxHandler)
+								,(app_path['ajax']+'/(.+)/([\w-]{3,20})/([0-9]+)', AjaxHandler)
 								,('/mnt', Maintance)
 								],
 							  debug=True)
